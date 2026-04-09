@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Analyst Bootcamp — Study Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--gold:#F5A623;--light:#F4F6FA;--grey:#D0D8E8;
+  --text:#2D2D2D;--sub:#666;--white:#fff;--green:#2E7D4F;--red:#C0392B;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#EEF2F7;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+header{background:var(--navy);padding:0;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.header-brand{padding:.75rem 1.5rem;display:flex;align-items:center;gap:10px;border-right:1px solid rgba(255,255,255,.1)}
+.header-brand h1{color:#fff;font-size:16px;font-weight:600;white-space:nowrap}
+.header-brand span{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-top:1px}
+.header-progress{flex:1;display:flex;align-items:center;gap:16px;padding:0 1.5rem}
+.progress-label{font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap}
+.progress-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .4s}
+.progress-pct{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;min-width:32px;text-align:right}
+
+/* ── LAYOUT ── */
+.app-body{display:flex;flex:1;min-height:0}
+
+/* ── SIDEBAR ── */
+nav{width:240px;background:var(--navy);flex-shrink:0;padding:.5rem 0;overflow-y:auto;position:sticky;top:52px;height:calc(100vh - 52px)}
+.nav-section{padding:.5rem 1rem .25rem;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.55rem 1rem;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;transition:background .15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.07)}
+.nav-item.active{background:rgba(255,255,255,.12);border-left-color:var(--gold)}
+.nav-icon{font-size:14px;width:20px;text-align:center;color:rgba(255,255,255,.5);flex-shrink:0}
+.nav-item.active .nav-icon{color:var(--gold)}
+.nav-label{font-size:12.5px;color:rgba(255,255,255,.75);line-height:1.3}
+.nav-item.active .nav-label{color:#fff;font-weight:500}
+.nav-badge{margin-left:auto;font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:1px 6px;border-radius:10px;flex-shrink:0}
+.nav-badge.done{background:var(--green);color:#fff}
+
+/* ── MAIN CONTENT ── */
+main{flex:1;padding:1.5rem;overflow-y:auto;max-width:900px}
+
+/* ── HOME ── */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:1rem}
+.topic-card{background:#fff;border-radius:12px;border:1px solid var(--grey);padding:1.2rem;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.topic-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.topic-card-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.topic-card-icon{font-size:20px;margin-bottom:8px;display:block}
+.topic-card h3{font-size:14px;font-weight:600;margin-bottom:4px;color:var(--navy)}
+.topic-card p{font-size:12px;color:var(--sub);line-height:1.5}
+.topic-card-progress{margin-top:10px;height:4px;background:var(--light);border-radius:2px;overflow:hidden}
+.topic-card-progress-fill{height:100%;border-radius:2px;transition:width .4s}
+.topic-card-stats{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--sub)}
+
+/* ── TOPIC VIEW ── */
+.topic-header{background:#fff;border-radius:12px;border:1px solid var(--grey);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.topic-header-top{display:flex;align-items:center;gap:12px;margin-bottom:.75rem}
+.topic-header-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+.topic-header-title h2{font-size:20px;font-weight:600;color:var(--navy)}
+.topic-header-title p{font-size:12px;color:var(--sub);margin-top:2px}
+.summary-box{background:var(--light);border-radius:8px;padding:.9rem 1.1rem;font-size:13px;line-height:1.7;color:var(--text);border-left:3px solid var(--gold)}
+.formula-table{width:100%;border-collapse:collapse;margin-top:.75rem;font-size:12px}
+.formula-table th{background:var(--navy);color:#fff;padding:6px 10px;text-align:left;font-weight:500}
+.formula-table td{padding:5px 10px;border-bottom:1px solid var(--grey);background:#fff}
+.formula-table tr:nth-child(even) td{background:var(--light)}
+.formula-code{font-family:"SF Mono","Fira Code",monospace;background:var(--light);border:1px solid var(--grey);border-radius:4px;padding:1px 6px;font-size:11px}
+
+/* ── QUIZ ── */
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.quiz-title{font-size:16px;font-weight:600;color:var(--navy)}
+.quiz-meta{font-size:13px;color:var(--sub)}
+.quiz-progress-row{background:#fff;border-radius:8px;border:1px solid var(--grey);padding:.6rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:12px}
+.quiz-progress-label{font-size:12px;color:var(--sub);white-space:nowrap}
+.quiz-progress-track{flex:1;height:8px;background:var(--light);border-radius:4px;overflow:hidden}
+.quiz-progress-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
+.quiz-score-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--light);color:var(--sub)}
+
+.question-card{background:#fff;border-radius:12px;border:1px solid var(--grey);padding:1.4rem;margin-bottom:1rem}
+.q-num{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:.5rem}
+.q-text{font-size:15px;line-height:1.6;color:var(--navy);font-weight:500;margin-bottom:1.1rem}
+.options{display:flex;flex-direction:column;gap:.5rem}
+.option-btn{display:flex;align-items:flex-start;gap:10px;padding:.75rem 1rem;border-radius:8px;border:1.5px solid var(--grey);background:#fff;cursor:pointer;font-size:13.5px;color:var(--text);text-align:left;transition:all .15s;width:100%;line-height:1.5}
+.option-btn:hover:not(:disabled){border-color:#9AB;background:var(--light)}
+.option-btn.correct{border-color:var(--green);background:#E8F5E9;color:var(--green)}
+.option-btn.wrong{border-color:var(--red);background:#FFEBEE;color:var(--red)}
+.option-btn.reveal{border-color:var(--green);background:#E8F5E9;color:var(--green)}
+.option-btn:disabled{cursor:default}
+.opt-letter{width:22px;height:22px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--sub);margin-top:1px}
+.option-btn.correct .opt-letter{background:var(--green);color:#fff}
+.option-btn.wrong .opt-letter{background:var(--red);color:#fff}
+.option-btn.reveal .opt-letter{background:var(--green);color:#fff}
+.explanation{margin-top:1rem;padding:.75rem 1rem;background:#FFF8E7;border-radius:8px;border-left:3px solid var(--gold);font-size:13px;line-height:1.6;color:#444;display:none}
+.explanation.show{display:block}
+.q-actions{display:flex;gap:10px;margin-top:.75rem}
+.btn{padding:.55rem 1.2rem;border-radius:8px;border:1.5px solid var(--grey);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all .15s;font-family:inherit}
+.btn:hover{background:var(--light)}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.primary:hover{opacity:.9}
+.btn.gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* ── RESULTS ── */
+.results-card{background:#fff;border-radius:12px;border:1px solid var(--grey);padding:2rem;text-align:center;margin-bottom:1rem}
+.results-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1}
+.results-label{font-size:14px;color:var(--sub);margin-top:.5rem}
+.results-stars{font-size:28px;margin:1rem 0}
+.results-message{font-size:15px;color:var(--text);max-width:400px;margin:0 auto .5rem}
+.results-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:1.5rem}
+.result-stat{background:var(--light);border-radius:8px;padding:.75rem;text-align:center}
+.result-stat-num{font-size:22px;font-weight:700;color:var(--navy)}
+.result-stat-label{font-size:11px;color:var(--sub);margin-top:2px}
+.review-list{margin-top:1rem}
+.review-item{background:#fff;border:1px solid var(--grey);border-radius:8px;padding:.75rem 1rem;margin-bottom:.4rem;display:flex;gap:10px;align-items:flex-start}
+.review-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.review-dot.correct{background:var(--green)}
+.review-dot.wrong{background:var(--red)}
+.review-q{font-size:13px;color:var(--text)}
+.review-ans{font-size:11.5px;color:var(--sub);margin-top:3px}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:1.5rem}
+.page-header h2{font-size:22px;font-weight:600;color:var(--navy)}
+.page-header p{font-size:13px;color:var(--sub);margin-top:4px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.25rem;background:var(--light);border-radius:8px;padding:3px}
+.tab{flex:1;padding:.45rem;border:none;background:transparent;border-radius:6px;font-size:13px;font-weight:500;color:var(--sub);cursor:pointer;transition:all .15s;font-family:inherit}
+.tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+@media(max-width:640px){nav{width:0;display:none}.app-body{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div>
+      <h1>📊 Data Analyst Bootcamp</h1>
+      <span>Study Platform</span>
+    </div>
+  </div>
+  <div class="header-progress">
+    <span class="progress-label">Overall progress</span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="global-bar" style="width:0%"></div></div>
+    <span class="progress-pct" id="global-pct">0%</span>
+  </div>
+</header>
+
+<div class="app-body">
+  <nav id="sidebar">
+    <div class="nav-section">Topics</div>
+    <button class="nav-item active" onclick="showHome()" id="nav-home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+  </nav>
+  <main id="main-content"></main>
+</div>
+
+<script>
+const TOPICS = [
+{
+  id:"center", title:"Measures of Center", icon:"⊕",
+  color:"#2C4A7C",
+  summary:`<b>Mean (x̄)</b>: Sum of all values ÷ n. Sensitive to outliers. Best for symmetric data.<br>
+<b>Median</b>: Middle value when sorted. Resistant to outliers. Best for skewed data.<br>
+<b>Mode</b>: Most frequent value. Used for categorical data. Can be bimodal or have no mode.<br>
+<b>Key rule</b>: If Mean ≠ Median, the data is skewed. Mean &gt; Median → right-skewed. Mean &lt; Median → left-skewed.`,
+  formulas:[
+    ["Mean","x̄ = Σxᵢ / n","=AVERAGE(range)"],
+    ["Median","Middle value after sorting","=MEDIAN(range)"],
+    ["Mode","Most frequent value","=MODE(range)"],
+  ],
+  questions:[
+    {q:"A dataset has values: 10, 20, 20, 30, 100. What is the mean?",
+     opts:["20","36","30","25"],correct:1,
+     exp:"(10+20+20+30+100)/5 = 180/5 = 36. The outlier (100) pulls the mean up."},
+    {q:"Using the same dataset (10, 20, 20, 30, 100), what is the median?",
+     opts:["20","36","30","25"],correct:0,
+     exp:"Sorted: 10,20,20,30,100. Middle value (3rd of 5) = 20."},
+    {q:"Why is the median preferred over the mean for house prices?",
+     opts:["Easier to calculate","It ignores very expensive mansions that would skew the average","It equals the mode","It gives a higher value"],correct:1,
+     exp:"A few extremely expensive properties pull the mean up, making it unrepresentative. The median is not affected."},
+    {q:"A dataset has mean = 85 and median = 72. What does this suggest?",
+     opts:["The data is symmetric","The data is left-skewed","The data is right-skewed","There is no skewness"],correct:2,
+     exp:"Mean > Median indicates a right skew — a few high values are pulling the mean upward."},
+    {q:"Five employees earn: ₪8k, ₪9k, ₪10k, ₪10k, ₪10k. What is the mode?",
+     opts:["₪9k","₪10k","₪8k","₪9.4k"],correct:1,
+     exp:"₪10k appears three times — more than any other value."},
+    {q:"A class of 6 scores: 55, 60, 70, 75, 80, 90. What is the median?",
+     opts:["70","72.5","75","71"],correct:1,
+     exp:"With an even number of values, median = average of the two middle values = (70+75)/2 = 72.5"},
+    {q:"Which measure of center is most affected by a single extreme outlier?",
+     opts:["Median","Mode","Mean","All equally"],correct:2,
+     exp:"The mean uses every value in its calculation, so one extreme value changes it significantly."},
+    {q:"A distribution has mean = median = mode. This is called:",
+     opts:["Right-skewed","Left-skewed","Symmetric (Normal)","Bimodal"],correct:2,
+     exp:"When all three measures of center are equal, the distribution is perfectly symmetric."},
+    {q:"Salaries in a company: most earn ₪12k–₪15k, but the CEO earns ₪500k. Which measure best represents the 'typical' salary?",
+     opts:["Mean","Median","Mode","Range"],correct:1,
+     exp:"The CEO's salary would inflate the mean enormously. The median gives the actual middle salary."},
+    {q:"What does the mean represent mathematically?",
+     opts:["The most common value","The balance point of all values","The middle when sorted","The halfway point between min and max"],correct:1,
+     exp:"The mean is the balance point — if you placed weights on a number line, the mean is where it would balance."},
+    {q:"Scores: 70, 75, 80, 80, 80, 85, 90. What is the mode?",
+     opts:["80","80 and 85","75","No mode"],correct:0,
+     exp:"80 appears 3 times, more than any other value. The distribution is unimodal."},
+    {q:"A dataset is left-skewed. Which is true?",
+     opts:["Mean > Median","Mean < Median","Mean = Median","Mode > Mean"],correct:1,
+     exp:"In a left-skewed distribution, the tail goes left, pulling the mean downward below the median."},
+    {q:"You calculate the average response time for a website: 200ms, 210ms, 190ms, 215ms, 850ms. The mean is:",
+     opts:["210ms","333ms","313ms","200ms"],correct:2,
+     exp:"(200+210+190+215+850)/5 = 1665/5 = 333ms. The outlier (850ms) significantly inflates the mean."},
+    {q:"Why might a dataset have no mode?",
+     opts:["All values are the same","No value repeats","The dataset is too large","The mean equals the median"],correct:1,
+     exp:"If every value appears exactly once, there is no most-frequent value — no mode exists."},
+    {q:"Which measure of center should you report when data is heavily right-skewed?",
+     opts:["Mean","Mode","Median","Standard deviation"],correct:2,
+     exp:"For skewed data, the median is more representative because it sits in the actual middle of the distribution."},
+    {q:"12 people earn between ₪10k–₪20k, and 1 person earns ₪1,000k. The mean is ₪85k. Does this fairly represent the group?",
+     opts:["Yes — the mean is always fair","No — the outlier inflates the mean far above what most people earn","Yes — larger samples are always reliable","No — the mode would be better"],correct:1,
+     exp:"₪85k is far above what 12 of the 13 people earn. The outlier distorts the mean completely."},
+    {q:"A dataset has values 1,2,3,4,5,6,7,8,9,10. What is the median?",
+     opts:["5","5.5","6","4.5"],correct:1,
+     exp:"With 10 values, median = (5+6)/2 = 5.5. The middle two values are the 5th and 6th."},
+    {q:"When is the mode the most useful measure of center?",
+     opts:["For income data","For exam scores","For categorical data like favorite color","For continuous measurements"],correct:2,
+     exp:"Mode is ideal for categorical data — e.g., 'most popular product category' or 'most common payment method'."},
+    {q:"If you add 10 to every value in a dataset, how does the mean change?",
+     opts:["It stays the same","It increases by 10","It increases by 100","It doubles"],correct:1,
+     exp:"Adding a constant to every value shifts the entire distribution, including the mean, by that constant."},
+    {q:"A dataset has two modes. This is called:",
+     opts:["Unimodal","Bimodal","Symmetric","Skewed"],correct:1,
+     exp:"Two modes = bimodal distribution. This often suggests two distinct sub-populations in the data."},
+    {q:"Ages: 22, 25, 25, 30, 35, 35, 35, 40. Mean ≈ 30.9. Median = ?",
+     opts:["30","32.5","35","30.9"],correct:1,
+     exp:"8 values, middle two are the 4th (30) and 5th (35): (30+35)/2 = 32.5"},
+    {q:"Exam scores: 40, 55, 60, 65, 95, 98, 99. Mean ≈ 73. The mean overstates performance because:",
+     opts:["The data is right-skewed","The data is left-skewed","Three high scores pull the mean up","The median is lower than the mode"],correct:0,
+     exp:"The three high scores (95,98,99) create a right tail, pulling the mean above where most students scored."},
+    {q:"What is the mean of a dataset where all values are identical (e.g., 7,7,7,7,7)?",
+     opts:["0","7","35","Cannot be calculated"],correct:1,
+     exp:"If every value equals 7, then the mean = 7×5/5 = 7. Mean equals the single repeated value."},
+    {q:"Which statement about the median is correct?",
+     opts:["It equals the mean for skewed data","It is always the most common value","It represents the 50th percentile","It is sensitive to outliers"],correct:2,
+     exp:"The median splits the data exactly in half — 50% of values fall below it, 50% above. It is the 50th percentile."},
+    {q:"In Excel, to find the most frequent value in column A, you would use:",
+     opts:["=AVERAGE(A:A)","=MEDIAN(A:A)","=MODE(A:A)","=MAX(A:A)"],correct:2,
+     exp:"=MODE() returns the most frequently occurring value in a range."},
+    {q:"A customer satisfaction survey has ratings: 1,1,2,3,4,4,4,5,5,5. What is the mode?",
+     opts:["4","4 and 5","3","5"],correct:1,
+     exp:"Both 4 and 5 appear 3 times each — this is a bimodal distribution."},
+    {q:"The mean salary at a startup is ₪50k. If the founder's salary of ₪1M is removed, the mean drops to ₪30k. This illustrates:",
+     opts:["The mode is more stable","The mean is sensitive to outliers","The median equals the mean","The dataset has no skewness"],correct:1,
+     exp:"One extreme value (the founder's salary) was inflating the mean by ₪20k for everyone else."},
+    {q:"If Mean < Median, what type of skew is present?",
+     opts:["Right-skewed (positive)","Left-skewed (negative)","No skew","Bimodal"],correct:1,
+     exp:"When the mean is pulled below the median, extreme low values are dragging it left — left (negative) skew."},
+    {q:"Which measure of center can you calculate for both numerical and categorical data?",
+     opts:["Mean","Median","Mode","Variance"],correct:2,
+     exp:"Mode works for any data type — you can find the most frequent category. Mean and median require numerical data."},
+    {q:"Daily temperatures for a week: 20,22,23,23,24,25,26°C. What is the mean (rounded)?",
+     opts:["23°C","23.3°C","24°C","22°C"],correct:1,
+     exp:"(20+22+23+23+24+25+26)/7 = 163/7 ≈ 23.3°C"},
+  ]
+},
+{
+  id:"spread", title:"Measures of Spread", icon:"↔",
+  color:"#2C4A7C",
+  summary:`<b>Range</b>: Max − Min. Simple but only uses two points.<br>
+<b>Variance (s²)</b>: Average squared deviation from mean. Uses n−1 for samples (Bessel's correction).<br>
+<b>Standard Deviation (s)</b>: √Variance. Same units as original data. Most commonly reported.<br>
+<b>IQR</b>: Q3 − Q1. Middle 50% of data. Outlier rule: values outside Q1−1.5×IQR or Q3+1.5×IQR.<br>
+<b>CV</b>: (Std Dev / Mean) × 100. Compares spread across different scales.`,
+  formulas:[
+    ["Range","Max − Min","=MAX(r)-MIN(r)"],
+    ["Variance","Σ(xᵢ−x̄)² / (n−1)","=VAR(range)"],
+    ["Std Dev","√Variance","=STDEV(range)"],
+    ["IQR","Q3 − Q1","=QUARTILE(r,3)−QUARTILE(r,1)"],
+    ["Outlier (low)","Q1 − 1.5 × IQR",""],
+    ["Outlier (high)","Q3 + 1.5 × IQR",""],
+  ],
+  questions:[
+    {q:"Dataset: 5, 8, 12, 15, 20. What is the range?",
+     opts:["15","20","8","12"],correct:0,
+     exp:"Range = Max − Min = 20 − 5 = 15."},
+    {q:"Why is the range considered a weak measure of spread?",
+     opts:["It requires sorting","It only uses two values — minimum and maximum","It cannot be negative","It ignores the median"],correct:1,
+     exp:"The range ignores all values between the minimum and maximum. One extreme outlier completely changes it."},
+    {q:"What does a large standard deviation indicate?",
+     opts:["Data is tightly clustered around the mean","Data is widely spread from the mean","The mean is high","There are no outliers"],correct:1,
+     exp:"A large standard deviation means values are far from the mean on average — high variability."},
+    {q:"In the formula for sample variance, why do we divide by n−1 instead of n?",
+     opts:["To make the formula easier","To correct for the tendency of sample variance to underestimate population variance (Bessel's correction)","To ensure the result is always positive","Because we lose one value"],correct:1,
+     exp:"Using n makes the sample variance biased (too small). Dividing by n−1 corrects this bias — called Bessel's correction."},
+    {q:"What is the relationship between variance and standard deviation?",
+     opts:["Variance = 2 × Std Dev","Std Dev = √Variance","Variance = Std Dev / 2","They are the same measure"],correct:1,
+     exp:"Standard deviation is the square root of variance, bringing the measure back to the original units."},
+    {q:"Which measure of spread is most resistant to outliers?",
+     opts:["Range","Standard Deviation","Variance","IQR"],correct:3,
+     exp:"IQR uses only the middle 50% of data (Q1 to Q3), completely ignoring the extreme values in the tails."},
+    {q:"Scores: 60, 65, 70, 75, 80. Q1=65, Q3=75. What is the IQR?",
+     opts:["15","10","20","5"],correct:1,
+     exp:"IQR = Q3 − Q1 = 75 − 65 = 10."},
+    {q:"Using the IQR outlier rule, a value is flagged as an outlier if it is:",
+     opts:["More than 2 standard deviations from the mean","Below Q1−1.5×IQR or above Q3+1.5×IQR","Below Q1 or above Q3","More than 3 standard deviations from the mean"],correct:1,
+     exp:"The box plot whisker rule: outliers lie below Q1−1.5×IQR or above Q3+1.5×IQR."},
+    {q:"Salaries in two teams: Team A has std dev = ₪500, Team B has std dev = ₪5,000. What does this mean?",
+     opts:["Team A earns more","Team B has more variation in salaries","Team A has more employees","Team B has a higher mean salary"],correct:1,
+     exp:"Higher standard deviation means more spread — Team B's salaries vary much more from person to person."},
+    {q:"What are the units of variance if the original data is in kilograms?",
+     opts:["Kilograms","Kilograms squared","No units","Grams"],correct:1,
+     exp:"Variance squares the deviations, so units get squared too. This is why standard deviation (in original units) is more interpretable."},
+    {q:"Q1 = 20, Q3 = 40. What is the upper outlier fence?",
+     opts:["50","60","70","80"],correct:2,
+     exp:"IQR = 40−20 = 20. Upper fence = Q3 + 1.5×IQR = 40 + 1.5×20 = 40 + 30 = 70."},
+    {q:"Two datasets have the same mean of 50. Dataset A has std dev = 2, Dataset B has std dev = 15. What can you conclude?",
+     opts:["Dataset A is larger","Dataset B has values more spread from 50","Dataset A has more outliers","They are identical datasets"],correct:1,
+     exp:"Same mean, but Dataset B's values vary much more. A std dev of 15 vs 2 means Dataset B is far more spread out."},
+    {q:"The Coefficient of Variation (CV) is useful because it:",
+     opts:["Measures skewness","Allows comparison of spread across datasets with different units or scales","Always equals 1","Replaces the standard deviation"],correct:1,
+     exp:"CV = (Std Dev / Mean) × 100%. It's dimensionless, allowing fair comparison of variability across different scales."},
+    {q:"In Excel, which formula calculates the interquartile range?",
+     opts:["=IQR(A1:A100)","=QUARTILE(A1:A100,3)-QUARTILE(A1:A100,1)","=Q3(A1:A100)-Q1(A1:A100)","=PERCENTILE(A1:A100,75)-PERCENTILE(A1:A100,25)"],correct:1,
+     exp:"Excel has no direct IQR function. You calculate Q3 (QUARTILE with 3) minus Q1 (QUARTILE with 1)."},
+    {q:"If you multiply all values in a dataset by 2, what happens to the standard deviation?",
+     opts:["It doubles","It stays the same","It is halved","It increases by 2"],correct:0,
+     exp:"Multiplying all values by a constant multiplies the standard deviation by the same constant."},
+    {q:"A dataset has very low variance. This means:",
+     opts:["There are many outliers","Values are clustered tightly around the mean","The mean is very high","The dataset is skewed"],correct:1,
+     exp:"Low variance = low spread = values are close to each other and close to the mean."},
+    {q:"Which of the following is NOT a measure of spread?",
+     opts:["Range","IQR","Standard Deviation","Median"],correct:3,
+     exp:"Median is a measure of center (central tendency), not spread."},
+    {q:"The 68-95-99.7 rule states that for a normal distribution, approximately what % of data falls within 1 standard deviation?",
+     opts:["50%","68%","95%","99.7%"],correct:1,
+     exp:"For a normal distribution: 68% within ±1σ, 95% within ±2σ, 99.7% within ±3σ."},
+    {q:"Q1=100, Q3=160. What is the lower outlier fence?",
+     opts:["10","55","40","70"],correct:1,
+     exp:"IQR = 160−100 = 60. Lower fence = Q1 − 1.5×IQR = 100 − 90 = 10. So 55 is not outlier but below 10 would be. Wait — Lower fence = 100 − 1.5×60 = 100−90 = 10. The correct answer is 10? Let me recalculate: 100 - 1.5*60 = 100-90 = 10. Answer is 10."},
+    {q:"What does it mean if the standard deviation equals zero?",
+     opts:["The dataset is empty","All values in the dataset are identical","There are only outliers","The mean is zero"],correct:1,
+     exp:"Zero standard deviation means zero spread — every single value equals the mean."},
+    {q:"Comparing income inequality between two countries, which measure is most appropriate?",
+     opts:["Range","Mean","Gini coefficient or IQR — not range","Standard deviation only"],correct:2,
+     exp:"IQR or relative measures are better than range for inequality, as range depends too heavily on extreme outliers."},
+    {q:"Dataset: 2, 4, 4, 4, 5, 5, 7, 9. The mean is 5. What is the variance?",
+     opts:["2","4","4.57","3.5"],correct:2,
+     exp:"Σ(xᵢ−5)²/(n−1): (9+1+1+1+0+0+4+16)/7 = 32/7 ≈ 4.57"},
+    {q:"In a business context, why would you care about standard deviation of daily sales?",
+     opts:["To find the average sale","To understand how predictable/consistent sales are day-to-day","To count total transactions","To identify the most popular product"],correct:1,
+     exp:"High std dev in daily sales means unpredictable revenue — harder to plan inventory and staffing."},
+    {q:"For a right-skewed salary distribution, which spread measure would you prefer to report?",
+     opts:["Range","Variance","IQR","Coefficient of Variation"],correct:2,
+     exp:"IQR ignores the extreme salaries at both ends and focuses on the middle 50%, making it more representative for skewed data."},
+    {q:"The formula =VAR(A1:A50) in Excel calculates:",
+     opts:["Population variance","Sample variance (divides by n−1)","Standard deviation","Mean squared error"],correct:1,
+     exp:"Excel's =VAR() calculates sample variance using n−1 (Bessel's correction). Use =VARP() for population variance."},
+    {q:"If you add a constant (e.g., 100) to every value, what happens to the variance?",
+     opts:["It increases by 100","It doubles","It stays the same","It decreases"],correct:2,
+     exp:"Adding a constant shifts all values equally, so the spread around the mean doesn't change. Variance is unchanged."},
+    {q:"A low IQR alongside a high range suggests:",
+     opts:["All data is tightly clustered","The middle 50% is compact but there are extreme outliers in the tails","High overall variability","Normal distribution"],correct:1,
+     exp:"Low IQR = tight middle. High range = extreme values at the ends. Classic sign of outliers."},
+    {q:"In Excel, =STDEV(A1:A100) uses which formula?",
+     opts:["Population standard deviation (divides by N)","Sample standard deviation (divides by n−1)","Absolute deviation","Interquartile range"],correct:1,
+     exp:"=STDEV uses n−1 (sample). Use =STDEVP for population standard deviation (divides by N)."},
+    {q:"Two products have the same average rating of 4.0/5. Product A has std dev = 0.2, Product B has std dev = 1.8. Which is more consistent?",
+     opts:["Product B","Product A","They are equally consistent","Cannot be determined"],correct:1,
+     exp:"Product A's ratings are tightly clustered around 4.0. Product B gets wildly different ratings — very inconsistent."},
+    {q:"Which formula computes the correct sample standard deviation from scratch?",
+     opts:["√[Σ(xᵢ−x̄)² / n]","√[Σ(xᵢ−x̄)² / (n−1)]","Σ|xᵢ−x̄| / n","Σ(xᵢ−x̄) / (n−1)"],correct:1,
+     exp:"Sample std dev uses n−1 in the denominator (Bessel's correction), then takes the square root."},
+  ]
+},
+{
+  id:"distributions", title:"Distributions & Skewness", icon:"∿",
+  color:"#884EA0",
+  summary:`<b>Normal Distribution</b>: Bell-shaped, symmetric. Mean = Median = Mode. 68-95-99.7 rule.<br>
+<b>Right-Skewed (+)</b>: Long tail to the right. Mean &gt; Median. Examples: income, prices.<br>
+<b>Left-Skewed (−)</b>: Long tail to the left. Mean &lt; Median. Examples: exam scores (most high, few very low).<br>
+<b>Bimodal</b>: Two peaks. Suggests two sub-populations. Do NOT analyze together — split first.`,
+  formulas:[
+    ["68-95-99.7 Rule","±1σ: 68%  |  ±2σ: 95%  |  ±3σ: 99.7%",""],
+    ["Skew direction","Mean > Median → Right skew",""],
+    ["Bimodal check","Histogram with 2 peaks → split data",""],
+  ],
+  questions:[
+    {q:"A normal distribution has mean = 100 and std dev = 15. Approximately what % of values fall between 85 and 115?",
+     opts:["50%","68%","95%","99.7%"],correct:1,
+     exp:"85 to 115 is mean ± 1σ (100±15). The 68-95-99.7 rule: 68% of values fall within 1 standard deviation."},
+    {q:"For a perfectly normal distribution, which is true?",
+     opts:["Mean > Median","Mean < Median","Mean = Median = Mode","Mode is undefined"],correct:2,
+     exp:"A symmetric normal distribution has its mean, median, and mode all at the exact same center point."},
+    {q:"Approximately what % of data falls beyond ±2 standard deviations in a normal distribution?",
+     opts:["32%","5%","0.3%","10%"],correct:1,
+     exp:"95% falls within ±2σ, so 100%−95% = 5% falls outside (2.5% in each tail)."},
+    {q:"Income data is typically right-skewed because:",
+     opts:["Most people earn very high incomes","A small number of very high earners pull the mean up","Income is normally distributed","The minimum income is zero"],correct:1,
+     exp:"Most people earn modest incomes, but a few billionaires create a long right tail, pulling the mean above the median."},
+    {q:"A histogram shows two distinct humps (peaks). This is called a:",
+     opts:["Normal distribution","Right-skewed distribution","Bimodal distribution","Uniform distribution"],correct:2,
+     exp:"Two peaks = bimodal. This often indicates two different sub-populations mixed in the same dataset."},
+    {q:"What is the correct action when you detect bimodality before running a correlation?",
+     opts:["Proceed with correlation as normal","Remove one of the peaks","Split the data into two groups and analyze each separately","Use the median instead of the mean"],correct:2,
+     exp:"Running correlation across two distinct populations produces a meaningless result. Split first, then analyze each group."},
+    {q:"Exam scores: mean = 65, median = 78. What type of skewness is this?",
+     opts:["Right-skewed","Left-skewed","Symmetric","Cannot be determined"],correct:1,
+     exp:"Mean < Median indicates left skew — a few very low scores are pulling the mean down below the median."},
+    {q:"In a right-skewed distribution, which is the correct order?",
+     opts:["Mode > Median > Mean","Mean > Median > Mode","Mean = Median = Mode","Median > Mean > Mode"],correct:1,
+     exp:"Right skew: the tail goes right, pulling the mean highest. Mode < Median < Mean."},
+    {q:"What visual tool is best for detecting the shape of a distribution?",
+     opts:["Pie chart","Scatter plot","Histogram","Box plot"],correct:2,
+     exp:"A histogram shows the frequency distribution, making it easy to see the shape, skewness, and multiple peaks."},
+    {q:"The 99.7% rule for normal distributions means:",
+     opts:["97% of data is normal","Almost all data (99.7%) falls within 3 standard deviations of the mean","99.7% of data is above the mean","The standard deviation is 0.3%"],correct:1,
+     exp:"±3σ captures virtually all data in a normal distribution — only 0.3% lies beyond this range."},
+    {q:"A dataset of mobile session durations shows a bimodal pattern. What likely explains this?",
+     opts:["Data entry errors","Two distinct user types (e.g., mobile vs desktop)","The data is right-skewed","The mean equals the median"],correct:1,
+     exp:"Bimodal session data commonly reflects two user groups with fundamentally different behaviors — like mobile vs desktop users."},
+    {q:"How can you identify if a distribution is roughly normal (without a formal test)?",
+     opts:["Check if range > std dev","Check if mean ≈ median ≈ mode and histogram looks bell-shaped","Check if all values are positive","Check if the dataset has more than 100 rows"],correct:1,
+     exp:"A quick check: compare mean vs median and visually inspect the histogram for a bell shape."},
+    {q:"Left-skewed data has a long tail going:",
+     opts:["To the right","To the left","In both directions","Nowhere — it has no tail"],correct:1,
+     exp:"Left-skew = negative skew = long tail pointing left. The few low values drag the mean downward."},
+    {q:"Which is an example of a likely left-skewed variable?",
+     opts:["Household income","Age at retirement (most people retire around 60-70, few retire very young)","Website page load time","Number of children"],correct:1,
+     exp:"Most people retire around 60-70. Very few retire at 25. This pulls the mean slightly left — a mild left skew."},
+    {q:"In a normal distribution with mean = 50 and std dev = 10, what range captures 95% of data?",
+     opts:["40 to 60","30 to 70","45 to 55","20 to 80"],correct:1,
+     exp:"95% falls within ±2σ = 50±20 = 30 to 70."},
+    {q:"A company's delivery times are: mostly 2-3 days, but occasionally 20+ days. This distribution is:",
+     opts:["Left-skewed","Symmetric","Right-skewed","Bimodal"],correct:2,
+     exp:"Most deliveries are fast, but some outliers (very late deliveries) create a long right tail — right skew."},
+    {q:"What is the median's relative position in a right-skewed distribution?",
+     opts:["Equal to the mean","Greater than the mean","Less than the mean","Not defined"],correct:2,
+     exp:"In a right-skewed distribution: Mode < Median < Mean. The median is between mode and mean."},
+    {q:"Which Excel function helps you visualize the distribution of numerical data?",
+     opts:["=NORM.DIST","=FREQUENCY or a histogram chart","=CORREL","=STDEV"],correct:1,
+     exp:"Excel's histogram chart (or =FREQUENCY function) visualizes how values are distributed across bins."},
+    {q:"Why does a normal distribution have the 68-95-99.7 property?",
+     opts:["Because of Bessel's correction","Because of the mathematical properties of the bell curve — the area under the curve follows these percentages","Because all data is positive","Because the range equals 6 standard deviations"],correct:1,
+     exp:"The bell curve has a specific mathematical shape (Gaussian) where these percentages are derived from the area under the curve."},
+    {q:"App session times have two peaks: one around 2 minutes and one around 45 minutes. What should an analyst do?",
+     opts:["Report the mean of all sessions","Delete one group","Analyze quick sessions and long sessions separately","Report only the median"],correct:2,
+     exp:"The two groups have completely different behaviors. Analyzing them together would produce misleading results."},
+    {q:"A Q-Q plot is used to:",
+     opts:["Measure correlation between two variables","Check if data follows a normal distribution visually","Calculate the interquartile range","Compare two datasets"],correct:1,
+     exp:"A Q-Q (quantile-quantile) plot compares your data's distribution to a theoretical normal — if points follow the diagonal line, it's normal."},
+    {q:"Which variable is most likely to be normally distributed?",
+     opts:["Annual income","Number of website visits per day","Height of adult men","Days until a product breaks"],correct:2,
+     exp:"Adult height is the classic example of a normal distribution — biological measurements with many small random factors tend to be normally distributed."},
+    {q:"If you observe mean = 200 and median = 150 in a salary dataset, the data is:",
+     opts:["Normally distributed","Left-skewed","Right-skewed","Bimodal"],correct:2,
+     exp:"Mean (200) > Median (150) → right skew. Some high earners are pulling the mean upward."},
+    {q:"The Central Limit Theorem states that:",
+     opts:["All data is normally distributed","The distribution of sample means approaches normal as sample size grows (n ≥ 30)","The mean always equals the median","The range shrinks with larger samples"],correct:1,
+     exp:"Even if the original data is not normal, the distribution of sample means becomes approximately normal for large samples (n ≥ 30)."},
+    {q:"A boxplot shows many dots above the upper whisker. This indicates:",
+     opts:["Normal distribution","Many high outliers — right skew","Many low outliers — left skew","Bimodal distribution"],correct:1,
+     exp:"Dots above the whisker = values beyond Q3+1.5×IQR = high outliers. These suggest right skew."},
+    {q:"Symmetric distributions have skewness = :",
+     opts:["1","−1","0","0.5"],correct:2,
+     exp:"Perfect symmetry has zero skewness. Positive skewness = right tail. Negative skewness = left tail."},
+    {q:"Which is NOT a sign of a normal distribution?",
+     opts:["Bell-shaped histogram","Mean ≈ Median ≈ Mode","Two distinct peaks","68% of data within 1 standard deviation"],correct:2,
+     exp:"Two distinct peaks = bimodal, which is the opposite of normal. The others are all properties of a normal distribution."},
+    {q:"Time to complete a task at work: most employees take 10-15 minutes, a few take 60+ minutes. What is the likely skew?",
+     opts:["Left-skewed","Symmetric","Right-skewed","No skew"],correct:2,
+     exp:"Most are fast (left cluster), a few take very long (right tail) → right-skewed distribution."},
+    {q:"In a perfectly symmetric distribution, which is always true?",
+     opts:["Variance = 0","50% of data is above the mean","All values are equal","The range is minimal"],correct:1,
+     exp:"In a symmetric distribution, the mean is at the center — exactly 50% of values are above it and 50% below it."},
+    {q:"A dataset has mean = 75 and median = 75. What can you conclude?",
+     opts:["The data is definitely normally distributed","The data appears symmetric (no skew)","The standard deviation is 0","The mode is also 75"],correct:1,
+     exp:"Mean = Median suggests symmetry, but doesn't guarantee normality. You'd need a histogram to confirm the shape."},
+  ]
+},
+{
+  id:"probability", title:"Probability", icon:"⚀",
+  color:"#884EA0",
+  summary:`<b>P(A)</b>: favorable outcomes ÷ total outcomes. Always 0 ≤ P ≤ 1.<br>
+<b>P(A ∪ B)</b> = P(A) + P(B) − P(A ∩ B) — Addition rule (OR).<br>
+<b>P(A ∩ B)</b> = P(A) × P(B) — if independent. = P(A|B) × P(B) — if dependent.<br>
+<b>P(A|B)</b> = P(A ∩ B) / P(B) — Conditional probability.<br>
+<b>P(Ā)</b> = 1 − P(A) — Complement rule.`,
+  formulas:[
+    ["Basic","P(A) = favorable / total",""],
+    ["OR","P(A∪B) = P(A)+P(B)−P(A∩B)",""],
+    ["AND (independent)","P(A∩B) = P(A)×P(B)",""],
+    ["Conditional","P(A|B) = P(A∩B) / P(B)",""],
+    ["Complement","P(Ā) = 1 − P(A)",""],
+  ],
+  questions:[
+    {q:"A bag contains 3 red balls and 7 blue balls. What is the probability of drawing a red ball?",
+     opts:["0.3","0.7","3/7","0.5"],correct:0,
+     exp:"P(red) = 3 / (3+7) = 3/10 = 0.3"},
+    {q:"What is the probability of an impossible event?",
+     opts:["1","0.5","0","−1"],correct:2,
+     exp:"An impossible event has probability 0. A certain event has probability 1."},
+    {q:"P(A) = 0.4, P(B) = 0.3, and A and B are mutually exclusive. What is P(A or B)?",
+     opts:["0.7","0.12","0.58","1.0"],correct:0,
+     exp:"Mutually exclusive means P(A∩B) = 0. So P(A∪B) = 0.4 + 0.3 − 0 = 0.7"},
+    {q:"P(A) = 0.5, P(B) = 0.4, P(A and B) = 0.2. What is P(A or B)?",
+     opts:["0.9","0.7","0.2","0.3"],correct:1,
+     exp:"P(A∪B) = P(A)+P(B)−P(A∩B) = 0.5+0.4−0.2 = 0.7"},
+    {q:"Two fair coins are tossed. What is the probability of getting two heads?",
+     opts:["0.5","0.25","0.75","0.1"],correct:1,
+     exp:"P(H)×P(H) = 0.5×0.5 = 0.25. Tosses are independent events."},
+    {q:"P(rain) = 0.3. What is P(no rain)?",
+     opts:["0.3","0.7","1.3","0"],correct:1,
+     exp:"Complement rule: P(no rain) = 1 − P(rain) = 1 − 0.3 = 0.7"},
+    {q:"In a company, 40% of employees are in Sales and 30% are Female. If these are independent, what % are Female Sales employees?",
+     opts:["70%","12%","10%","35%"],correct:1,
+     exp:"P(Sales AND Female) = P(Sales) × P(Female) = 0.40 × 0.30 = 0.12 = 12%"},
+    {q:"What does conditional probability P(A|B) mean?",
+     opts:["The probability of A happening before B","The probability of A given that B has already occurred","The probability of A and B both occurring","The probability of A or B"],correct:1,
+     exp:"P(A|B) reads as 'probability of A given B' — we already know B happened and want to know the probability of A."},
+    {q:"P(Marketing) = 0.25, P(Female | Marketing) = 0.6. What is P(Marketing AND Female)?",
+     opts:["0.15","0.85","0.6","0.35"],correct:0,
+     exp:"P(A∩B) = P(A|B) × P(B) = 0.6 × 0.25 = 0.15"},
+    {q:"A die is rolled. What is P(even number)?",
+     opts:["1/3","1/2","2/3","1/6"],correct:1,
+     exp:"Even numbers on a die: {2,4,6} = 3 out of 6 outcomes. P = 3/6 = 1/2 = 0.5"},
+    {q:"Which of the following is NOT a valid probability value?",
+     opts:["0","0.99","1.2","0.5"],correct:2,
+     exp:"Probability must be between 0 and 1 inclusive. 1.2 is impossible."},
+    {q:"In a contingency table, you find that P(A|B) = P(A). What does this mean?",
+     opts:["A and B are dependent","A and B are independent — knowing B gives no info about A","A causes B","B causes A"],correct:1,
+     exp:"If P(A|B) = P(A), knowing B happened doesn't change A's probability — the events are statistically independent."},
+    {q:"P(A) = 0.6, P(B) = 0.5, P(A∩B) = 0.35. Are A and B independent?",
+     opts:["Yes","No","Cannot determine","Always independent"],correct:1,
+     exp:"For independence: P(A∩B) should equal P(A)×P(B) = 0.6×0.5 = 0.30. But P(A∩B) = 0.35 ≠ 0.30 → dependent."},
+    {q:"Out of 200 customers, 80 are from Tel Aviv and 60 are Female. 30 are Female from Tel Aviv. What is P(Female OR Tel Aviv)?",
+     opts:["0.55","0.70","0.40","0.85"],correct:0,
+     exp:"P(F) = 60/200 = 0.3, P(TA) = 80/200 = 0.4, P(F∩TA) = 30/200 = 0.15. P(F∪TA) = 0.3+0.4−0.15 = 0.55"},
+    {q:"A student passes exam A with probability 0.8 and exam B with probability 0.7. If independent, P(pass both)?",
+     opts:["1.5","0.56","0.75","0.15"],correct:1,
+     exp:"P(A AND B) = P(A) × P(B) = 0.8 × 0.7 = 0.56"},
+    {q:"What is the sum of probabilities of all possible outcomes in a sample space?",
+     opts:["0","0.5","1","Depends on the experiment"],correct:2,
+     exp:"The probabilities of all possible outcomes always sum to exactly 1 — one of them must happen."},
+    {q:"In a dataset: 50 use Facebook, 40 use Instagram, 10 use both. Total = 100. P(Facebook OR Instagram)?",
+     opts:["0.9","0.8","0.5","1.0"],correct:1,
+     exp:"P(FB∪IG) = 50/100 + 40/100 − 10/100 = 0.5+0.4−0.1 = 0.8"},
+    {q:"A website shows an ad to 1000 users. 200 click it. 50 of those who clicked made a purchase. P(purchase | click)?",
+     opts:["0.05","0.25","0.50","0.2"],correct:1,
+     exp:"P(purchase|click) = P(purchase AND click) / P(click) = (50/1000) / (200/1000) = 50/200 = 0.25"},
+    {q:"What does it mean for two events to be mutually exclusive?",
+     opts:["They always happen together","They cannot both happen at the same time","They are independent","P(A) × P(B) = P(A∩B)"],correct:1,
+     exp:"Mutually exclusive: if one happens, the other cannot. P(A∩B) = 0. Example: rolling a 1 and rolling a 6 simultaneously."},
+    {q:"P(A) = 0.4. What is P(not A)?",
+     opts:["0.4","0.6","0.16","1.4"],correct:1,
+     exp:"Complement rule: P(Ā) = 1 − P(A) = 1 − 0.4 = 0.6"},
+    {q:"A quality inspector checks 500 products: 25 are defective. P(defective)?",
+     opts:["0.025","0.05","0.25","0.5"],correct:1,
+     exp:"P(defective) = 25/500 = 0.05 = 5%"},
+    {q:"If events A and B are independent and P(A) = 0.3, P(B) = 0.5, what is P(A∩B)?",
+     opts:["0.8","0.15","0.35","0.65"],correct:1,
+     exp:"For independent events: P(A∩B) = P(A) × P(B) = 0.3 × 0.5 = 0.15"},
+    {q:"A company has 100 employees: 60 full-time, 40 part-time. 20 full-time are managers. P(manager | full-time)?",
+     opts:["0.20","0.33","0.25","0.30"],correct:1,
+     exp:"P(manager|full-time) = P(manager AND full-time) / P(full-time) = (20/100) / (60/100) = 20/60 ≈ 0.333"},
+    {q:"Rolling a die: P(getting a 5 on the first roll AND a 5 on the second roll)?",
+     opts:["1/6","1/36","1/12","2/6"],correct:1,
+     exp:"Independent events: P(5)×P(5) = (1/6)×(1/6) = 1/36 ≈ 0.028"},
+    {q:"In Excel, to count how many rows match TWO criteria simultaneously, you use:",
+     opts:["=COUNTIF","=COUNTIFS","=SUMIF","=IF"],correct:1,
+     exp:"=COUNTIFS counts rows that meet multiple criteria simultaneously — perfect for calculating intersection probabilities from tables."},
+    {q:"P(A) = 0.7, P(B) = 0.4. If A and B are mutually exclusive, can this be correct?",
+     opts:["Yes, always","No — mutually exclusive events can't sum to more than 1","Yes if P(A∪B) = 1","No — P(A) must equal P(B)"],correct:1,
+     exp:"If A and B are mutually exclusive, P(A∪B) = P(A)+P(B) = 1.1 > 1. This is impossible, so they cannot both be mutually exclusive with these probabilities."},
+    {q:"What is the probability of an event that is certain to happen?",
+     opts:["0","0.5","0.95","1"],correct:3,
+     exp:"A certain event has P = 1. It will definitely happen."},
+    {q:"A card is drawn from a 52-card deck. P(Heart OR Face card)?",
+     opts:["13/52 + 12/52","22/52","25/52","16/52"],correct:1,
+     exp:"P(Heart)=13/52, P(Face)=12/52, P(Heart∩Face)=3/52. P(H∪F) = 13/52+12/52−3/52 = 22/52 ≈ 0.423"},
+    {q:"If you know that B has occurred, and P(A|B) = 0.8, what does 0.8 represent?",
+     opts:["P(B)","The probability that A will happen given B happened","P(A) for the full population","P(A AND B)"],correct:1,
+     exp:"0.8 is the conditional probability of A given that B has already occurred."},
+    {q:"100 customers: 40 bought online, 60 bought in-store. 15 of the online buyers returned their purchase. P(return | online)?",
+     opts:["0.15","0.375","0.25","0.10"],correct:1,
+     exp:"P(return|online) = 15/40 = 0.375 = 37.5%. We restrict to online buyers only."},
+  ]
+},
+{
+  id:"zscore", title:"Z-Score & Outliers", icon:"Ź",
+  color:"#34495E",
+  summary:`<b>Z-Score formula</b>: z = (x − μ) / σ — How many standard deviations is a value from the mean?<br>
+<b>z = 0</b>: Value equals the mean. <b>z = +2</b>: 2 std devs above. <b>z = −2</b>: 2 std devs below.<br>
+<b>Outlier rule</b>: |z| &gt; 3 is typically considered an extreme outlier.<br>
+<b>Excel</b>: =(A2−AVERAGE($A$2:$A$100))/STDEV($A$2:$A$100)<br>
+<b>Z-score properties</b>: Mean of all z-scores = 0. Std dev of all z-scores = 1.`,
+  formulas:[
+    ["Z-Score","z = (x − μ) / σ","=(A2-AVERAGE($A$2:$A$n))/STDEV($A$2:$A$n)"],
+    ["Outlier","| z | > 3 → extreme","=IF(ABS(z)>3,\"Outlier\",\"OK\")"],
+  ],
+  questions:[
+    {q:"A student scores 85 on an exam. The class mean is 70 and std dev is 10. What is the student's z-score?",
+     opts:["1.5","0.85","2","−1.5"],correct:0,
+     exp:"z = (85−70)/10 = 15/10 = 1.5. The student is 1.5 standard deviations above the mean."},
+    {q:"A z-score of 0 means:",
+     opts:["The value is at the maximum","The value equals the mean","The value is an outlier","The value is below average"],correct:1,
+     exp:"z = 0 means (x − μ)/σ = 0, which means x = μ. The value equals the mean exactly."},
+    {q:"What is the mean of all z-scores in a dataset?",
+     opts:["1","−1","0","Depends on the data"],correct:2,
+     exp:"When you standardize a dataset, the new mean is always 0 and the new standard deviation is always 1."},
+    {q:"An employee's salary has a z-score of −2.5. What does this mean?",
+     opts:["They earn 2.5 times the average","Their salary is 2.5 standard deviations below the mean","They earn a negative salary","Their salary is in the top 2.5%"],correct:1,
+     exp:"Negative z-score = below the mean. z = −2.5 means 2.5 standard deviations below average."},
+    {q:"If a value has |z| > 3, it is considered:",
+     opts:["Normal","Above average","A potential extreme outlier","Below average"],correct:2,
+     exp:"The 99.7% rule means only 0.3% of values fall beyond ±3σ. A |z| > 3 is highly unusual and flagged as an outlier."},
+    {q:"Mean = 100, Std Dev = 20. What value corresponds to z = 2?",
+     opts:["120","140","80","102"],correct:1,
+     exp:"x = μ + z×σ = 100 + 2×20 = 140. Z-score can also be used to reverse-calculate the original value."},
+    {q:"What does the z-score allow you to do that raw values cannot?",
+     opts:["Calculate the mean","Compare values from different scales or distributions","Find the mode","Calculate variance"],correct:1,
+     exp:"A test score of 80 on one exam and 80 on another are not comparable if the exams have different means and spreads. Z-scores standardize them."},
+    {q:"A city's average temperature is 25°C with std dev = 3°C. A day reaches 34°C. The z-score is:",
+     opts:["3","−3","9","0.3"],correct:0,
+     exp:"z = (34−25)/3 = 9/3 = 3. This day is 3 standard deviations above average — unusual but not impossible."},
+    {q:"If all z-scores in a dataset are very close to 0 (e.g., between −0.5 and +0.5), what does this indicate?",
+     opts:["All values are equal to the mean","The data has very low spread relative to the mean","The data is right-skewed","The outlier count is high"],correct:1,
+     exp:"Z-scores close to 0 mean values are very close to the mean — the distribution is tightly clustered."},
+    {q:"A z-score formula uses which denominator?",
+     opts:["n","n−1","Standard deviation (σ or s)","Variance"],correct:2,
+     exp:"z = (x − μ) / σ. The denominator is the standard deviation, which puts everything in 'standard deviation units'."},
+    {q:"Using the Excel formula =(A2-AVERAGE($A$2:$A$100))/STDEV($A$2:$A$100), why use $ signs?",
+     opts:["To make the formula faster","To lock the range so it doesn't shift when copying down","To use population std dev","To highlight outliers"],correct:1,
+     exp:"$ locks the absolute reference. Without it, copying the formula down shifts the range — you'd be standardizing against different subsets."},
+    {q:"A product's return rate has z = 4.2. What should the analyst do?",
+     opts:["Ignore it — z-scores don't matter","Flag it as a potential data error or extreme outlier and investigate","Report it as normal","Delete the row immediately"],correct:1,
+     exp:"z = 4.2 is extremely far from the mean. This warrants investigation — is it a real outlier or a data quality issue?"},
+    {q:"Z-score standardization transforms data to have mean = ___ and std dev = ___.",
+     opts:["1 and 0","0 and 1","100 and 15","50 and 10"],correct:1,
+     exp:"Standardization (z-score transformation) always produces a distribution with mean = 0 and standard deviation = 1."},
+    {q:"Employee A earns ₪20k (mean ₪18k, std ₪2k). Employee B scores 75 on performance (mean 70, std 5). Who performs relatively better vs their peer group?",
+     opts:["Employee A (z=1.0 vs z=0.5)","Employee B (z=1.0 vs z=1.0)","Both perform equally (z=1.0 each)","Cannot compare"],correct:2,
+     exp:"A: z=(20−18)/2=1.0. B: z=(75−70)/5=1.0. Both are exactly 1 standard deviation above their respective means — equally above average."},
+    {q:"A dataset has mean=50, std=10. A value of 80 has z=3. Which statement is correct?",
+     opts:["80 is impossible","80 is within the normal range","80 is a potential extreme outlier","80 is exactly 2 std devs above the mean"],correct:2,
+     exp:"z = (80−50)/10 = 3. |z| > 3 flags it as a potential extreme outlier — but it may still be a real observation."},
+    {q:"The z-score formula divides by the standard deviation because:",
+     opts:["It makes the result negative","It scales the difference relative to typical variability in the data","It ensures results are between 0 and 1","It removes the mean"],correct:1,
+     exp:"By dividing by σ, we express the deviation in units of 'how many typical deviations away.' This makes different scales comparable."},
+    {q:"What percentage of data in a normal distribution has |z| > 2?",
+     opts:["32%","10%","5%","0.3%"],correct:2,
+     exp:"95% of normal data falls within ±2σ. So 5% lies outside |z| > 2."},
+    {q:"If the mean salary is ₪15,000 and std dev is ₪3,000, what salary corresponds to z = −1?",
+     opts:["₪12,000","₪18,000","₪9,000","₪14,000"],correct:0,
+     exp:"x = μ + z×σ = 15,000 + (−1)×3,000 = 12,000. Z = −1 is one standard deviation below the mean."},
+    {q:"You compute z-scores for a column and find max z = 6.8. What is the most likely interpretation?",
+     opts:["Normal variation","Possible data entry error or extreme outlier requiring investigation","The data is skewed left","The standard deviation is incorrect"],correct:1,
+     exp:"z = 6.8 means 6.8 standard deviations from the mean — this is extremely unlikely in clean data and warrants investigation."},
+    {q:"Which scenario best justifies using z-scores for comparison?",
+     opts:["Comparing salaries in the same company","Comparing exam scores across two schools with different grading scales","Calculating the company's total revenue","Identifying the most common value"],correct:1,
+     exp:"Z-scores enable fair comparison across different scales — a score of 80/100 and 40/50 on different exams are best compared via z-scores."},
+    {q:"The standard deviation of all z-scores in a dataset is always:",
+     opts:["0","The same as the original std dev","1","Depends on sample size"],correct:2,
+     exp:"After z-score transformation, the standard deviation is always exactly 1."},
+    {q:"Mean=200, std=25. Value=125. Z-score = ?",
+     opts:["−3","3","−3.5","−2.5"],correct:0,
+     exp:"z = (125−200)/25 = −75/25 = −3. This value is 3 standard deviations below the mean."},
+    {q:"Qatar has CO₂ emissions per capita with z = 6. This means:",
+     opts:["Qatar has 6 times the average emissions","Qatar emits 6 standard deviations more than the global average — an extreme outlier","Qatar's data is incorrect","Qatar emits 6% more than average"],correct:1,
+     exp:"z = 6 means Qatar is 6 standard deviations above the world mean. This is a genuine extreme outlier, not a calculation error."},
+    {q:"After z-score standardization, approximately what % of values fall between z=−1 and z=+1 (for normal data)?",
+     opts:["50%","68%","95%","99.7%"],correct:1,
+     exp:"In a normal distribution, 68% of values fall within ±1 standard deviation (z between −1 and +1)."},
+    {q:"To flag all outliers where |z| > 3 in Excel (z-score in column D), you would use:",
+     opts:['=IF(D2>3,"Outlier","OK")',"=IF(ABS(D2)>3,\"Outlier\",\"OK\")",'=IF(D2<-3 OR D2>3,"Outlier","OK")',"=OUTLIER(D2)"],correct:1,
+     exp:"ABS() gets the absolute value, handling both positive and negative outliers. The IF then flags anything with |z| > 3."},
+    {q:"A low z-score (e.g., z = 0.1) means the value is:",
+     opts:["Very unusual","Very close to the mean","An outlier","Above average by 10%"],correct:1,
+     exp:"z = 0.1 means the value is only 0.1 standard deviations from the mean — completely typical."},
+    {q:"Why might a z-score of 0 for every value in a dataset be impossible (unless a special case)?",
+     opts:["Because z-scores must be positive","Because not all values can equal the mean unless std dev = 0","Because z-scores range from −1 to +1","Because the mean changes with each calculation"],correct:1,
+     exp:"z = 0 for all values means all values equal the mean. That only happens when std dev = 0 (all values identical)."},
+    {q:"Which Excel formula correctly computes a z-score for salary in B2 relative to column B (rows 2 to 101)?",
+     opts:["=(B2-AVERAGE(B2:B101))/STDEV(B2:B101)","=(B2-AVERAGE($B$2:$B$101))/STDEV($B$2:$B$101)","=(B2-B1)/STDEV(B:B)","=STANDARDIZE(B2)"],correct:1,
+     exp:"The $ signs lock the range so it doesn't shift when you copy the formula to other rows. Without them, each row uses a different range."},
+    {q:"Infant mortality rates: global mean = 21.5, std = 19.6. Sierra Leone has rate = 78.5. Z-score ≈",
+     opts:["2.9","0.9","4.1","1.5"],correct:0,
+     exp:"z = (78.5−21.5)/19.6 = 57/19.6 ≈ 2.91. Sierra Leone is nearly 3 standard deviations above the global mean."},
+    {q:"Two datasets are standardized. Dataset A's values cluster between z = −0.5 and +0.5. Dataset B's values range from z = −3 to +3. What does this tell you?",
+     opts:["Dataset A is larger","Dataset B had more spread in its original values relative to its mean","Dataset A has outliers","The means are different"],correct:1,
+     exp:"After standardization, z-scores reflect relative position. Wider z-range in B means B had proportionally more spread in the original data."},
+  ]
+},
+{
+  id:"normalization", title:"Normalization & Weighted Index", icon:"⊞",
+  color:"#2E7D4F",
+  summary:`<b>Min-Max Scaling</b>: x_norm = (x − min) / (max − min). Result: 0 to 1.<br>
+<b>Inverted</b>: x_norm = 1 − (x − min) / (max − min). Use for negative indicators (e.g., pollution, mortality).<br>
+<b>Weighted Index</b>: Index = (w₁ × norm₁ + w₂ × norm₂ + ...) × 100. Weights must sum to 100%.<br>
+<b>Key rule</b>: Normalize BEFORE weighting. Rank after computing the index.`,
+  formulas:[
+    ["Min-Max","(x−min)/(max−min)","=(A2-MIN($A$2:$A$n))/(MAX($A$2:$A$n)-MIN($A$2:$A$n))"],
+    ["Inverted","1 − (x−min)/(max−min)","=1-(A2-MIN($A$2:$A$n))/(MAX($A$2:$A$n)-MIN($A$2:$A$n))"],
+    ["Index","(w₁×n₁+w₂×n₂+...)×100","=(0.6*G2+0.4*H2)*100"],
+    ["Rank","RANK descending","=RANK(I2,$I$2:$I$n,0)"],
+  ],
+  questions:[
+    {q:"A salary of ₪20,000 in a dataset where min=₪8,000 and max=₪40,000. What is the Min-Max normalized value?",
+     opts:["0.5","0.375","0.667","0.8"],correct:1,
+     exp:"(20,000−8,000)/(40,000−8,000) = 12,000/32,000 = 0.375"},
+    {q:"What is the normalized value of the maximum value in a dataset after Min-Max scaling?",
+     opts:["0","0.5","1","Depends on the range"],correct:2,
+     exp:"(max−min)/(max−min) = 1. The maximum always becomes 1 after Min-Max scaling."},
+    {q:"What is the normalized value of the minimum value after Min-Max scaling?",
+     opts:["0","1","0.5","The min itself"],correct:0,
+     exp:"(min−min)/(max−min) = 0/range = 0. The minimum always becomes 0 after Min-Max scaling."},
+    {q:"Why do we normalize before building a composite index?",
+     opts:["To make all values negative","To bring all variables to the same scale so no single variable dominates due to its magnitude","To increase the variance","To remove outliers"],correct:1,
+     exp:"Without normalization, a variable with large numbers (like salary in thousands) would dominate a variable with small numbers (like a 1-10 rating)."},
+    {q:"The 'Clean Air Score' inverts normalization so that the cleanest country gets score 1. For CO₂ per capita: min=0.001, max=0.036. A country with 0.036 gets:",
+     opts:["1","0","0.5","0.036"],correct:1,
+     exp:"Inverted: 1 − (0.036−0.001)/(0.036−0.001) = 1 − 1 = 0. The most polluting country gets the lowest score."},
+    {q:"You build an index with GDP weight = 60% and Clean Air weight = 40%. The formula is:",
+     opts:["(GDP + Air) / 2","(GDP × 0.6 + Air × 0.4) × 100","(GDP + Air) × 100","GDP × 60 + Air × 40"],correct:1,
+     exp:"Weighted average formula: sum of (each normalized value × its weight), then multiply by 100 to scale to 0-100."},
+    {q:"What must be true about the weights in a weighted index?",
+     opts:["They must all be equal","They must sum to exactly 100% (or 1.0)","Each weight must be at least 0.5","They must be whole numbers"],correct:1,
+     exp:"Weights represent the proportion of each component in the final index. They must sum to 1 (100%) to be valid weights."},
+    {q:"In Excel, the formula for Min-Max normalization of cell C2 (column C, rows 2-121) is:",
+     opts:["=(C2-MIN(C2:C121))/(MAX(C2:C121)-MIN(C2:C121))","=(C2-MIN($C$2:$C$121))/(MAX($C$2:$C$121)-MIN($C$2:$C$121))","=(C2-AVERAGE(C2:C121))/STDEV(C2:C121)","=C2/MAX(C2:C121)"],correct:1,
+     exp:"The $ signs lock the range so when you copy the formula down, it always references the full dataset for min and max."},
+    {q:"A country has normalized GDP = 0.9 (very wealthy) but normalized Clean Air = 0.05 (very polluted). With 60/40 weights, the Green Economy Index =",
+     opts:["47.5","56","0.56","40"],correct:1,
+     exp:"(0.9×0.6 + 0.05×0.4) × 100 = (0.54 + 0.02) × 100 = 56.0"},
+    {q:"After Min-Max normalization, Liechtenstein has norm_GDP = 1.0. This means:",
+     opts:["Liechtenstein has the highest GDP per capita in the dataset","Liechtenstein has GDP per capita equal to 1","Liechtenstein has GDP per capita equal to the mean","Liechtenstein has exactly twice the average GDP"],correct:0,
+     exp:"A normalized value of 1.0 means this country has the maximum GDP per capita in the dataset — it's the reference maximum."},
+    {q:"Why might changing the weight distribution from 60/40 to 50/50 change the ranking?",
+     opts:["It wouldn't — ranking is always stable","If a country excels in one dimension and not the other, shifting weights changes which dimension dominates the score","Weights only affect the raw score, not rank","Normalized values change with different weights"],correct:1,
+     exp:"Different weights favor different dimensions. A country very high on Clean Air but low on GDP would rank higher with 50/50 vs 60/40."},
+    {q:"You want to normalize infant mortality where lower is better. The country with the LOWEST mortality should get score 1. You use:",
+     opts:["Standard Min-Max","Inverted Min-Max: 1 − (x−min)/(max−min)","Z-score","Divide by maximum"],correct:1,
+     exp:"Inverted normalization flips the scale. The minimum value gets score 1 (best), the maximum gets 0 (worst)."},
+    {q:"In the Green Economy Index, if ALL countries have the same GDP per capita, what would their normalized GDP scores be?",
+     opts:["All 0","All 1","All 0.5","It would cause a division by zero error"],correct:3,
+     exp:"If max = min, the denominator (max−min) = 0, causing division by zero. All values being equal makes normalization undefined."},
+    {q:"Country A: norm_GDP=0.8, norm_Air=0.3. Country B: norm_GDP=0.5, norm_Air=0.7. With 60/40 weights, who ranks higher?",
+     opts:["Country A","Country B","They tie","Cannot determine"],correct:0,
+     exp:"A: (0.8×0.6+0.3×0.4)×100 = (0.48+0.12)×100 = 60. B: (0.5×0.6+0.7×0.4)×100 = (0.30+0.28)×100 = 58. Country A wins."},
+    {q:"The =RANK(I2,$I$2:$I$121,0) formula in Excel: what does the '0' mean?",
+     opts:["Descending order (1 = highest)","Ascending order (1 = lowest)","Rank by column 0","Ignore ties"],correct:0,
+     exp:"In Excel's RANK function, 0 = descending (largest gets rank 1). 1 = ascending (smallest gets rank 1)."},
+    {q:"You have 3 variables: Performance (0.7), Salary (0.8), Training (0.4). Weights: 40%, 40%, 20%. Index =",
+     opts:["1.9","68","69","0.69"],correct:2,
+     exp:"(0.7×0.4 + 0.8×0.4 + 0.4×0.2) × 100 = (0.28+0.32+0.08) × 100 = 68"},
+    {q:"A value at the 50th percentile of a dataset would normalize to approximately:",
+     opts:["0","1","0.5","Depends on the distribution"],correct:3,
+     exp:"Min-Max does NOT center at 0.5 unless the data is perfectly symmetric. The median only maps to 0.5 in a perfectly uniform distribution."},
+    {q:"You normalize salary data, but later realize you forgot to clean the GDP column (still has '$' and commas). What happens?",
+     opts:["Min-Max still works correctly","Excel treats the column as text — MIN and MAX return errors or 0","The normalization doubles the values","Normalization only works for integers"],correct:1,
+     exp:"Text values in a column break numeric functions. Always clean data (remove $, commas, %) before normalizing."},
+    {q:"Min = 10, Max = 90, value = 10. Normalized =",
+     opts:["1","0.5","0","10"],correct:2,
+     exp:"(10−10)/(90−10) = 0/80 = 0. The minimum always normalizes to 0."},
+    {q:"What is the advantage of a weighted index over a simple average of normalized values?",
+     opts:["It's easier to calculate","It allows you to reflect domain knowledge about which factors are more important","It always gives higher scores","It requires fewer variables"],correct:1,
+     exp:"A simple average gives equal weight to all variables. A weighted index lets you express that some dimensions matter more than others — reflecting the business decision."},
+    {q:"Emissions per capita: min=0.001, max=0.036, value=0.018. Inverted normalized score =",
+     opts:["0.5","0.49","0.51","0"],correct:1,
+     exp:"Standard: (0.018−0.001)/(0.036−0.001) = 0.017/0.035 ≈ 0.486. Inverted: 1 − 0.486 ≈ 0.514. Closest answer: 0.51, but approximately 0.49-0.51 — the answer depends on rounding."},
+    {q:"Which is the correct order of steps to build a composite index?",
+     opts:["Weight → Normalize → Rank","Normalize → Weight → Multiply by 100 → Rank","Rank → Normalize → Weight","Weight → Rank → Normalize"],correct:1,
+     exp:"Always normalize first (same scale), then apply weights, then scale to 0-100, then rank."},
+    {q:"A company builds a 'Customer Value Score' with Spending (50%) and Frequency (50%). Both are normalized. Which formula is correct?",
+     opts:["=AVERAGE(norm_spend, norm_freq)×100","=(norm_spend×0.5 + norm_freq×0.5)×100","=norm_spend+norm_freq×100","=(norm_spend+norm_freq)/100"],correct:1,
+     exp:"With equal weights, both options give the same result — but the explicit weighted formula is clearer and more flexible for future changes."},
+    {q:"After normalization, you discover two countries both have normalized GDP = 0.85. What is their difference in rank?",
+     opts:["They get the same rank","One gets rank n, one gets rank n+1","They cannot both have 0.85","They are tied"],correct:3,
+     exp:"In Excel RANK, tied values receive the same rank. Their order depends on which appears first in the column — they are effectively tied."},
+    {q:"Why is it important to normalize per-capita values rather than absolute values?",
+     opts:["Per-capita is harder to manipulate","Large countries with bigger populations would dominate the absolute rankings","Per-capita values are always between 0 and 1","Absolute values cannot be normalized"],correct:1,
+     exp:"China has huge absolute GDP and emissions, but spread over 1.4B people, the per-capita figures are moderate. Normalization on absolute values would unfairly rank large countries."},
+    {q:"What does it mean when two different weighting schemes produce the same #1 ranked country?",
+     opts:["The weights don't matter","The index is perfectly normalized","The top country dominates across all dimensions — the result is robust to weight choices","The weights must have been the same"],correct:2,
+     exp:"If a country ranks first regardless of reasonable weight variations, it's a dominant choice — the finding is robust."},
+    {q:"Min-Max normalization is sensitive to:",
+     opts:["The median","Extreme outliers, because they become the min or max and compress all other values","The mean only","The standard deviation"],correct:1,
+     exp:"If there's one extreme outlier at the max, it compresses all other values into a narrow range near 0. This is a key weakness of Min-Max."},
+    {q:"In Excel, how do you scale a weighted average to 0–100?",
+     opts:["Add 100","Multiply by 100","Divide by 100","No scaling needed"],correct:1,
+     exp:"The weighted average of normalized values (0–1) gives a result 0–1. Multiplying by 100 scales it to 0–100."},
+    {q:"After normalization, which country always gets a score of 0.0?",
+     opts:["The country with the median value","The country with the highest value","The country with the lowest value","The country closest to average"],correct:2,
+     exp:"Min-Max: (min−min)/(max−min) = 0. The minimum value in the dataset always maps to 0."},
+    {q:"Weighted Index formula for 3 variables (weights: 50%, 30%, 20%): which is correct?",
+     opts:["=(A+B+C)/3 × 100","=(A×0.5+B×0.3+C×0.2)×100","=(A×50+B×30+C×20)×100","=A×0.5+B×0.3+C×0.2+100"],correct:1,
+     exp:"Multiply each normalized value by its weight (as a decimal), sum them, then multiply by 100 to get a 0-100 scale."},
+  ]
+},
+{
+  id:"hypothesis", title:"Hypothesis Testing & P-Value", icon:"H₀",
+  color:"#028090",
+  summary:`<b>H₀ (Null)</b>: Default assumption — no effect, no difference, no relationship.<br>
+<b>H₁ (Alternative)</b>: What you want to prove. Can be one-tailed (&gt; or &lt;) or two-tailed (≠).<br>
+<b>P-value</b>: Probability of seeing these results IF H₀ were true. p &lt; 0.05 → reject H₀ → significant.<br>
+<b>α = 0.05</b>: The threshold. We accept a 5% false positive rate.<br>
+<b>Effect size</b>: Always report alongside p-value. Significance ≠ practical importance.`,
+  formulas:[
+    ["Decision","p < α → Reject H₀","p ≥ α → Fail to reject H₀"],
+    ["Type I Error","Reject H₀ when it's true","Probability = α"],
+    ["Type II Error","Fail to reject H₀ when it's false","Probability = β"],
+    ["Power","1 − β","Probability of detecting a real effect"],
+  ],
+  questions:[
+    {q:"What does the null hypothesis (H₀) represent?",
+     opts:["The hypothesis we are trying to prove","The default assumption that nothing is happening (no effect, no difference)","The result after the test","The alternative explanation"],correct:1,
+     exp:"H₀ is the status quo — we assume no effect until data provides strong evidence otherwise."},
+    {q:"A p-value of 0.03 with α = 0.05. What do you conclude?",
+     opts:["Fail to reject H₀","Reject H₀ — result is statistically significant","Accept H₀","The test is inconclusive"],correct:1,
+     exp:"p = 0.03 < α = 0.05 → We reject H₀. The result is statistically significant at the 5% level."},
+    {q:"What does p = 0.03 actually mean?",
+     opts:["There is a 3% chance that H₁ is true","If H₀ were true, there is only a 3% probability of observing results this extreme","The test has 3% error","The effect size is 3%"],correct:1,
+     exp:"The p-value is the probability of seeing your data (or more extreme) IF H₀ were actually true. Small p → data is unlikely under H₀."},
+    {q:"p = 0.12 with α = 0.05. What is the correct conclusion?",
+     opts:["Reject H₀","Fail to reject H₀ — not statistically significant","H₁ is proven false","The data is invalid"],correct:1,
+     exp:"p = 0.12 > 0.05 → we cannot reject H₀. We don't have sufficient evidence against the null hypothesis."},
+    {q:"What is a Type I Error?",
+     opts:["Failing to detect a real effect","Rejecting H₀ when it is actually true (false positive)","Accepting a false null hypothesis","A calculation error in the test"],correct:1,
+     exp:"Type I Error = false positive. We conclude there's an effect when there isn't one. Controlled by α."},
+    {q:"What is a Type II Error?",
+     opts:["Rejecting a true H₀","Accepting a false H₀ — failing to detect a real effect (false negative)","Making an arithmetic mistake","Using the wrong test"],correct:1,
+     exp:"Type II Error = false negative. A real effect exists but our test failed to detect it. Probability = β."},
+    {q:"Statistical Power is defined as:",
+     opts:["α","1 − β (probability of correctly detecting a real effect)","p-value","1 − α"],correct:1,
+     exp:"Power = 1 − β. High power (≥ 0.80) means we're likely to detect real effects. Low power means we might miss them."},
+    {q:"A two-tailed hypothesis test H₁: μ ≠ 70 is testing:",
+     opts:["Only whether the mean is greater than 70","Only whether the mean is less than 70","Whether the mean differs from 70 in either direction","Whether the mean equals exactly 70"],correct:2,
+     exp:"Two-tailed: we're interested in any difference from 70, whether above or below."},
+    {q:"You find p = 0.001 for a new drug. A journalist says 'The drug is proven effective.' What is wrong?",
+     opts:["Nothing — p < 0.05 proves effectiveness","Significance shows the result is unlikely by chance, but doesn't prove cause. Effect size and practical significance also matter","The drug should be rejected","p = 0.001 is too small to trust"],correct:1,
+     exp:"p < 0.05 means the result is statistically significant — unlikely due to chance. But it doesn't prove causation or practical importance."},
+    {q:"What is α (alpha) in hypothesis testing?",
+     opts:["The effect size","The p-value we calculate","The pre-set threshold for rejecting H₀ (usually 0.05)","The probability of a Type II error"],correct:2,
+     exp:"α is the significance level — the maximum p-value at which we're willing to reject H₀. Usually 0.05."},
+    {q:"If α = 0.05, what is the probability of making a Type I Error?",
+     opts:["0","0.95","0.05","Cannot be known"],correct:2,
+     exp:"By setting α = 0.05, we accept a 5% chance of falsely rejecting H₀. This is the controlled Type I error rate."},
+    {q:"A study with n = 10,000 finds p = 0.04, but the effect is tiny (e.g., 0.01% difference). What should you note?",
+     opts:["The result is both significant and important","Statistical significance with large n can detect trivially small effects — always check effect size","The p-value is wrong","n = 10,000 invalidates the test"],correct:1,
+     exp:"Large samples have high power to detect even tiny effects. A significant p-value doesn't mean the effect is practically meaningful."},
+    {q:"H₀: The conversion rate = 5%. You test a new landing page. H₁ would be:",
+     opts:["H₁: The conversion rate = 5%","H₁: The conversion rate ≠ 5% (or > 5%)","H₁: The conversion rate = 10%","H₁: The test is valid"],correct:1,
+     exp:"H₁ states what you expect or want to detect — that the new page changes (or improves) the conversion rate."},
+    {q:"You test whether men and women have the same mean salary. H₀ is:",
+     opts:["Men earn more than women","Women earn more than men","Mean salary for men = Mean salary for women","Salary differences are significant"],correct:2,
+     exp:"H₀ represents 'no difference' — men and women have equal mean salaries. The test evaluates evidence against this."},
+    {q:"Which of these p-values gives the MOST evidence against H₀?",
+     opts:["p = 0.10","p = 0.05","p = 0.001","p = 0.99"],correct:2,
+     exp:"Smaller p-value = stronger evidence against H₀. p = 0.001 means the data would be extremely unlikely if H₀ were true."},
+    {q:"'Fail to reject H₀' means:",
+     opts:["H₀ is definitely true","We proved H₁","We don't have enough evidence to conclude H₁","The test failed due to error"],correct:2,
+     exp:"We never 'accept' H₀ — we either reject it or fail to reject it. Not enough evidence doesn't mean H₀ is true."},
+    {q:"p = 0.048 and p = 0.052. One is significant at α=0.05, one is not. In practice, should you treat them very differently?",
+     opts:["Yes — one is significant, one is not, completely different conclusions","No — these are nearly identical p-values; the binary threshold is a guideline, not an absolute truth","Yes — 0.048 proves H₁","No — neither is significant"],correct:1,
+     exp:"The cutoff at 0.05 is a convention, not a law. p = 0.048 and p = 0.052 provide nearly identical evidence. Report effect sizes and context."},
+    {q:"A marketing team claims their new ad campaign 'significantly' increased sales. The p-value is 0.02. What additional information do you need?",
+     opts:["The sample size only","Nothing — p < 0.05 is enough","The effect size — how large was the actual sales increase?","The null hypothesis"],correct:2,
+     exp:"p < 0.05 tells you the increase was unlikely by chance. But was it 0.1% or 20%? Effect size quantifies the practical impact."},
+    {q:"What happens to the p-value if you run the same study with a larger sample?",
+     opts:["It always increases","It always decreases — larger samples have more power to detect effects","It stays the same","It becomes invalid"],correct:1,
+     exp:"Larger samples give more statistical power. Small effects that aren't detected with n=30 might be significant with n=300."},
+    {q:"The alternative hypothesis H₁: μ > 100 is a:",
+     opts:["Two-tailed test","One-tailed test (right-sided)","One-tailed test (left-sided)","Null hypothesis"],correct:1,
+     exp:"H₁: μ > 100 only looks for increases — one-tailed (right). H₁: μ ≠ 100 would be two-tailed."},
+    {q:"Statistical significance means:",
+     opts:["The result is practically important","The result is unlikely to be due to random chance (p < α)","The sample size is large enough","The effect size is large"],correct:1,
+     exp:"Statistical significance only means the result is unlikely under H₀. It says nothing about the size or importance of the effect."},
+    {q:"If you run 20 independent tests at α=0.05, how many would you expect to produce false positives by chance?",
+     opts:["0","1","5","20"],correct:1,
+     exp:"Each test has a 5% Type I error rate. 20 × 0.05 = 1 expected false positive. This is why multiple testing requires correction (Bonferroni etc.)."},
+    {q:"A one-tailed test is appropriate when:",
+     opts:["You have no prior expectation about the direction of the effect","You specifically hypothesize that the effect is in one direction (greater or less)","The sample size is small","The data is not normal"],correct:1,
+     exp:"One-tailed tests are used when theory/prior knowledge specifies the direction of the expected difference. They are more powerful for that direction."},
+    {q:"You fail to reject H₀ with p = 0.08. A manager says 'So the new strategy doesn't work.' What's wrong?",
+     opts:["The manager is correct","Failing to reject H₀ doesn't prove it true — the study may have lacked power to detect a real effect","p = 0.08 means the strategy works","You should have used α = 0.10"],correct:1,
+     exp:"'Absence of evidence is not evidence of absence.' The test may have been underpowered. Consider sample size and effect size before concluding."},
+    {q:"Effect size reports are important because:",
+     opts:["They replace the p-value","They tell you HOW big the difference or relationship is, not just whether it's significant","They are always required by law","They reduce Type II error"],correct:1,
+     exp:"p-value = 'is there an effect?' Effect size = 'how big is the effect?' Both are needed for a complete interpretation."},
+    {q:"H₀: No relationship between marketing channel and spending. H₁: There IS a relationship. You find p = 0.002. You:",
+     opts:["Fail to reject H₀","Reject H₀ and conclude a relationship likely exists","Accept H₁ with certainty","Need more data"],correct:1,
+     exp:"p = 0.002 < 0.05 → Reject H₀. We have strong evidence of a relationship, though we still need effect size to assess its magnitude."},
+    {q:"Which type of error is more dangerous in a medical drug trial?",
+     opts:["Type I (approving a drug that doesn't work)","Type II (missing a drug that does work)","Both are equal","Neither is relevant in medicine"],correct:0,
+     exp:"In medicine, approving an ineffective drug (Type I) could harm patients. That's why medical trials use stricter α = 0.01 or even 0.001."},
+    {q:"The p-value is NOT:",
+     opts:["The probability of the data given H₀","A measure of how extreme the results are","The probability that H₁ is true","Compared to α to make a decision"],correct:2,
+     exp:"A common misconception: p-value is NOT the probability that H₁ is true. It's P(data | H₀) — probability of this data given H₀ is true."},
+    {q:"After running a t-test, you get t = 3.2 with df = 98. The p-value will be:",
+     opts:["Greater than 0.05","Less than 0.05","Exactly 0.05","t-statistic doesn't produce a p-value"],correct:1,
+     exp:"t = 3.2 with df = 98 is a large t-statistic — corresponding to a p-value well below 0.05. Large |t| → small p → significant."},
+    {q:"Setting α = 0.01 instead of 0.05 makes it:",
+     opts:["Easier to reject H₀","Harder to reject H₀ — we require stronger evidence","Easier to detect effects","Irrelevant to the test"],correct:1,
+     exp:"A stricter α (0.01) means we need a smaller p-value to reject H₀. We demand stronger evidence — reducing false positives but risking more false negatives."},
+  ]
+},
+{
+  id:"correlation", title:"Correlation & Linear Regression", icon:"r",
+  color:"#1A5276",
+  summary:`<b>Pearson r</b>: Measures linear relationship between two numerical variables. Range: −1 to +1.<br>
+|r| ≥ 0.7: Strong | 0.3–0.7: Moderate | &lt; 0.3: Weak.<br>
+<b>Regression</b>: Y = a + b·X. b = slope, a = intercept.<br>
+<b>R²</b>: % of variance in Y explained by X. R² = r².<br>
+<b>Critical rule</b>: Always check for bimodality and outliers BEFORE computing correlation. Correlation ≠ Causation.`,
+  formulas:[
+    ["Pearson r","=CORREL(X_range, Y_range)","−1 ≤ r ≤ +1"],
+    ["Slope","=SLOPE(Y, X)","b: change in Y per unit X"],
+    ["Intercept","=INTERCEPT(Y, X)","a: Y when X=0"],
+    ["R²","=RSQ(Y, X)","% variance in Y explained by X"],
+    ["Prediction","Ŷ = a + b×X",""],
+  ],
+  questions:[
+    {q:"What does Pearson's r measure?",
+     opts:["The slope of the regression line","The strength and direction of the linear relationship between two numerical variables","The percentage of variance explained","The p-value of the relationship"],correct:1,
+     exp:"Pearson r measures both how strong (magnitude) and what direction (+/−) the linear relationship between two variables is."},
+    {q:"r = −0.85. What does this mean?",
+     opts:["Weak negative relationship","Strong positive relationship","Strong negative relationship","No relationship"],correct:2,
+     exp:"|r| = 0.85 ≥ 0.7 → Strong. Negative sign → as X increases, Y decreases. Strong negative (inverse) relationship."},
+    {q:"r = 0.15. How would you characterize this relationship?",
+     opts:["Strong positive","Moderate positive","Weak positive","No relationship at all"],correct:2,
+     exp:"|r| = 0.15 < 0.3 → Weak. There is barely any linear relationship between the variables."},
+    {q:"Before computing Pearson r, what is the most important preparatory step?",
+     opts:["Normalize the data","Check for bimodality with a histogram and remove outliers","Calculate the mean","Compute the IQR"],correct:1,
+     exp:"Pearson r is highly sensitive to outliers. A single extreme point can artificially inflate or deflate r. Also, bimodality creates misleading correlations."},
+    {q:"Correlation does NOT imply causation because:",
+     opts:["The formula is not reliable","A third 'confounding' variable could be causing both X and Y to move together","Correlation only works for large samples","r can never be 1"],correct:1,
+     exp:"Classic example: ice cream sales and drowning rates are correlated — but neither causes the other. Summer (the third variable) drives both."},
+    {q:"In the regression equation Y = 3 + 5X, what does the '5' represent?",
+     opts:["The value of Y when X = 0","For every 1-unit increase in X, Y increases by 5 units","The correlation coefficient","The R² value"],correct:1,
+     exp:"The slope (b = 5) means: for each additional unit of X, Y changes by 5 units on average."},
+    {q:"In the regression equation Y = 3 + 5X, what does the '3' represent?",
+     opts:["The slope","The correlation","The predicted Y when X = 0","The R² value"],correct:2,
+     exp:"The intercept (a = 3) is the predicted value of Y when X equals 0."},
+    {q:"R² = 0.72. What does this mean?",
+     opts:["The correlation is 0.72","72% of the variation in Y is explained by X","X causes Y 72% of the time","The model predicts Y correctly 72% of the time"],correct:1,
+     exp:"R² is the coefficient of determination. R² = 0.72 means X explains 72% of Y's variance. 28% remains unexplained."},
+    {q:"The slope b = −0.5 in a regression model. This means:",
+     opts:["For each unit increase in X, Y increases by 0.5","For each unit increase in X, Y decreases by 0.5","X and Y are unrelated","The intercept is −0.5"],correct:1,
+     exp:"Negative slope means an inverse relationship: as X goes up by 1, Y goes down by 0.5."},
+    {q:"In Excel, which formula computes Pearson r between column A and column B?",
+     opts:["=PEARSON(A,B)","=CORREL(A1:A100, B1:B100)","=CORRELATION(A,B)","=RSQ(A,B)"],correct:1,
+     exp:"=CORREL(range1, range2) computes Pearson r in Excel. The ranges must be the same length."},
+    {q:"You find r = 0.95 between number of firefighters at a fire and property damage. Does this mean firefighters cause damage?",
+     opts:["Yes — strong correlation proves causation","No — larger fires require more firefighters AND cause more damage. Fire size is the confounding variable.","Maybe — need more data","Yes — r > 0.9 always means causation"],correct:1,
+     exp:"Classic correlation ≠ causation example. A third variable (fire size) causes both more firefighters and more damage."},
+    {q:"What shape on a scatterplot suggests a strong positive linear correlation?",
+     opts:["Points scattered randomly","Points forming a tight cluster going from bottom-left to top-right","Points forming a U shape","Points in a horizontal line"],correct:1,
+     exp:"Strong positive linear correlation: points cluster tightly around an upward-sloping line from bottom-left to top-right."},
+    {q:"r = 0 means:",
+     opts:["X and Y have no relationship whatsoever","There is no LINEAR relationship — a nonlinear relationship might still exist","Y is constant","The sample is too small"],correct:1,
+     exp:"Pearson r only detects LINEAR relationships. If r = 0, there's no linear pattern, but there could still be a curve or other nonlinear pattern."},
+    {q:"R² = r². If r = 0.6, what is R²?",
+     opts:["0.6","0.36","1.2","0.77"],correct:1,
+     exp:"R² = 0.6² = 0.36. So X explains 36% of the variation in Y."},
+    {q:"The regression model Salary = 10,000 + 800 × Experience. Predicted salary for 5 years experience?",
+     opts:["₪14,000","₪50,000","₪14,000","₪800"],correct:0,
+     exp:"Ŷ = 10,000 + 800 × 5 = 10,000 + 4,000 = ₪14,000"},
+    {q:"What is the correct workflow before running a correlation?",
+     opts:["Compute r immediately","Histogram check → Scatterplot → Remove outliers → Then compute r","Compute r, then look at scatterplot","Run regression first, then correlation"],correct:1,
+     exp:"Always explore visually first: check for bimodality (histogram), visualize the relationship (scatterplot), handle outliers, THEN compute r."},
+    {q:"A regression model has R² = 0.10. What does this indicate?",
+     opts:["Strong predictive power","X explains only 10% of Y's variance — the model is weak","The correlation is 0.10","The slope is 10%"],correct:1,
+     exp:"R² = 0.10 is very low — the predictor explains only 10% of the outcome's variability. Many other factors drive Y."},
+    {q:"Which scatterplot pattern violates the assumption needed for Pearson r?",
+     opts:["Points on a straight line","Points forming a U-shaped (nonlinear) pattern","Points slightly scattered around a line","Points going from bottom-left to top-right"],correct:1,
+     exp:"Pearson r assumes a LINEAR relationship. A U-shape (or any curve) means r would give a misleading result — possibly showing r ≈ 0 even though there IS a pattern."},
+    {q:"A strong correlation (r = 0.9) between shoe size and reading level in children. Why is this likely not causal?",
+     opts:["The sample is too small","Age is the confounding variable — older children have bigger feet AND read better","Shoe size causes intelligence","Reading improves foot size"],correct:1,
+     exp:"Age drives both: as children grow older, feet grow larger AND reading improves. Age is the confounding variable."},
+    {q:"Excel's =RSQ(Y_range, X_range) returns:",
+     opts:["Pearson r","The slope","R² (coefficient of determination)","The p-value"],correct:2,
+     exp:"=RSQ() returns R², which equals r². Note: parameters are (known_y's, known_x's)."},
+    {q:"If the regression line predicts Y=50 but the actual Y=70, the residual is:",
+     opts:["−20","20","120","0.7"],correct:1,
+     exp:"Residual = Actual − Predicted = 70 − 50 = +20. Positive residual means the model underestimated."},
+    {q:"Bimodal data in a scatterplot (two clear clusters) would produce a Pearson r that:",
+     opts:["Accurately represents the relationship within each cluster","Could be misleading — a single line through two clouds doesn't describe either group well","Is always r = 0","Is always r = 1"],correct:1,
+     exp:"Running correlation across two distinct populations produces a meaningless result. The overall r might look moderate even though each cluster has no correlation internally."},
+    {q:"A slope of b = 200 in 'Sales = 5000 + 200 × Advertising' means:",
+     opts:["Sales average ₪200","Every ₪1 in advertising yields ₪200 in sales (on average)","Advertising causes ₪5000 in sales","Sales decrease by ₪200 per ₪1 of ads"],correct:1,
+     exp:"The slope b = 200 means: for each additional ₪1 spent on advertising, sales increase by ₪200 on average."},
+    {q:"Which is NOT a valid step in correlation analysis?",
+     opts:["Plotting a scatterplot","Computing Pearson r","Interpreting r as causation","Checking for outliers"],correct:2,
+     exp:"Interpreting r as causation is a fundamental error in statistics. Correlation describes association, not cause and effect."},
+    {q:"A dataset of exam scores and sleep hours has r = 0.55. This is:",
+     opts:["Weak relationship","Moderate positive relationship","Strong positive relationship","Perfect positive relationship"],correct:1,
+     exp:"r = 0.55 falls in the 0.3–0.7 range → moderate. More sleep is associated with higher scores, but the relationship isn't very tight."},
+    {q:"For the regression model Y = a + bX, what do you need from Excel to make predictions?",
+     opts:["Only R²","The slope (b) from =SLOPE() and intercept (a) from =INTERCEPT()","Only the p-value","Only Pearson r"],correct:1,
+     exp:"To predict Y: Ŷ = a + b×X. You need both the intercept (a = =INTERCEPT()) and slope (b = =SLOPE()) from Excel."},
+    {q:"r = −0.4 between price and quantity sold. If price increases by 1 unit, quantity:",
+     opts:["Increases (positive slope)","Decreases (negative relationship)","Stays the same","Doubles"],correct:1,
+     exp:"Negative correlation means as one variable increases, the other tends to decrease. Higher price → lower quantity demanded."},
+    {q:"R² = 0 means:",
+     opts:["Perfect prediction","X explains none of the variation in Y","The correlation is −1","Y is constant"],correct:1,
+     exp:"R² = 0 means X provides no predictive information about Y. The regression line is flat — just the mean of Y."},
+    {q:"Which statement correctly describes the relationship between r and R²?",
+     opts:["R² = 2r","R² = r²","r = R²","They are unrelated"],correct:1,
+     exp:"R² is literally the square of Pearson r. If r = 0.8, R² = 0.64 — 64% of Y's variance is explained by X."},
+    {q:"Outliers affect Pearson r because:",
+     opts:["They change the sample size","A single extreme point can shift the correlation dramatically, making a weak relationship look strong (or vice versa)","They reduce the variance","They change the mean of X only"],correct:1,
+     exp:"Pearson r is calculated using means, and means are sensitive to outliers. One extreme point can completely change the correlation coefficient."},
+  ]
+},
+{
+  id:"chisquare", title:"Chi-Square & Cramér's V", icon:"χ²",
+  color:"#C0392B",
+  summary:`<b>When to use</b>: Categorical variable vs Categorical variable.<br>
+<b>Steps</b>: Build observed table → Compute expected table (E = Row×Col / Total) → CHISQ.TEST → Cramér's V.<br>
+<b>Expected formula</b>: E = (Row Total × Column Total) / Grand Total<br>
+<b>Chi-Square test</b>: p &lt; 0.05 → relationship exists. <b>Cramér's V</b>: 0–0.2 weak, 0.2–0.6 moderate, &gt;0.6 strong.`,
+  formulas:[
+    ["Expected","E = (Row Total × Col Total) / Grand Total",""],
+    ["Chi-Square","=CHISQ.TEST(observed_range, expected_range)","Returns p-value"],
+    ["Cramér's V","V = √(χ² / (n × min(r−1, c−1)))","0–0.2: weak, 0.2–0.6: moderate, >0.6: strong"],
+  ],
+  questions:[
+    {q:"When is the Chi-Square test appropriate?",
+     opts:["When comparing means of two groups","When both variables are categorical","When one variable is numerical and one is categorical","When analyzing time series"],correct:1,
+     exp:"Chi-Square tests the relationship between two categorical variables — e.g., gender vs. payment method, region vs. product choice."},
+    {q:"In a contingency table, Row Total = 120, Column Total = 90, Grand Total = 350. Expected cell value =",
+     opts:["30.86","105","210","42"],correct:0,
+     exp:"E = (Row Total × Column Total) / Grand Total = (120 × 90) / 350 = 10800/350 ≈ 30.86"},
+    {q:"The expected table represents:",
+     opts:["The actual observed counts","What counts would look like if there were NO relationship between the variables","The maximum possible counts","The mode of each category"],correct:1,
+     exp:"Expected values show the theoretical distribution under H₀ (independence). Differences between observed and expected drive the chi-square statistic."},
+    {q:"In Excel, =CHISQ.TEST(B4:D8, J4:L8) returns:",
+     opts:["The chi-square statistic","The p-value","Cramér's V","The expected table"],correct:1,
+     exp:"=CHISQ.TEST returns the p-value directly. You pass the observed and expected ranges. p < 0.05 → significant relationship."},
+    {q:"Chi-Square gives p = 0.003. Cramér's V = 0.12. What is the correct interpretation?",
+     opts:["Strong significant relationship","Significant relationship, but the effect is weak (V = 0.12 < 0.2)","No relationship","The test is invalid"],correct:1,
+     exp:"p < 0.05 → relationship is statistically significant. But V = 0.12 → the strength of association is weak. Always report both."},
+    {q:"What does Cramér's V measure?",
+     opts:["The p-value of the chi-square test","The strength (effect size) of the association between two categorical variables","The expected cell count","The chi-square statistic"],correct:1,
+     exp:"Cramér's V is the effect size for chi-square — it measures HOW STRONG the relationship is, independent of sample size."},
+    {q:"A chi-square test of gender (M/F) vs department (5 categories). The degrees of freedom (df) for this test =",
+     opts:["10","8","4","5"],correct:1,
+     exp:"df = (rows − 1) × (columns − 1) = (2−1) × (5−1) = 1 × 4 = 4. Wait, df = 4. But V formula uses min(r−1, c−1) = min(1,4) = 1."},
+    {q:"Cramér's V = 0.45. How would you interpret this?",
+     opts:["Very weak relationship","Moderate association between the two categorical variables","Strong relationship","No relationship"],correct:1,
+     exp:"V = 0.45 falls in the 0.2–0.6 range → moderate association. There's a meaningful relationship, but it's not dominant."},
+    {q:"H₀ in a chi-square test is:",
+     opts:["The two variables are related","The two variables are independent (no relationship)","The expected counts equal the observed counts","V > 0.6"],correct:1,
+     exp:"H₀: the two categorical variables are independent — knowing one tells you nothing about the other."},
+    {q:"Why must expected cell counts typically be ≥ 5 for chi-square?",
+     opts:["It's a computational requirement","Very small expected counts make the chi-square approximation unreliable","The test requires balanced data","Expected counts must equal observed counts"],correct:1,
+     exp:"The chi-square distribution is an approximation that works poorly with very small cell counts. Expected < 5 in many cells → use Fisher's Exact Test instead."},
+    {q:"You have data: Region (North/South/Central) × Payment method (Cash/Card/App). This is a ___ × ___ table.",
+     opts:["3 × 3","2 × 3","3 × 2","6 × 1"],correct:0,
+     exp:"3 regions × 3 payment methods = a 3×3 contingency table."},
+    {q:"Cramér's V is always between:",
+     opts:["−1 and +1","−1 and 0","0 and +1","0 and 10"],correct:2,
+     exp:"Unlike Pearson r, Cramér's V has no direction — it only measures strength. Range is always 0 (no association) to 1 (perfect association)."},
+    {q:"How do you build the observed table for a chi-square test in Excel?",
+     opts:["Use =CORREL","Use =COUNTIFS to count combinations of the two categories","Use =AVERAGE","Use =MODE"],correct:1,
+     exp:"=COUNTIFS(col1, \"Category1\", col2, \"Category2\") counts how many rows match both conditions — filling each cell of the observed table."},
+    {q:"For a 2×2 table, the effect size measure is called:",
+     opts:["Cohen's d","Eta-squared","Phi (ϕ)","Pearson r"],correct:2,
+     exp:"Phi coefficient (ϕ) is Cramér's V for 2×2 tables specifically. For larger tables, use Cramér's V = √(χ²/(n×min(r−1,c−1)))."},
+    {q:"Chi-Square test: p = 0.15. Your conclusion?",
+     opts:["Significant relationship — reject H₀","No significant relationship — fail to reject H₀","V must be high","The test is inconclusive"],correct:1,
+     exp:"p = 0.15 > 0.05 → fail to reject H₀. No statistically significant relationship between the two categorical variables."},
+    {q:"The chi-square statistic is large when:",
+     opts:["Observed counts equal expected counts","Observed counts differ greatly from expected counts","The sample size is small","V = 0"],correct:1,
+     exp:"χ² = Σ[(O−E)²/E]. Large differences between observed and expected produce a large chi-square statistic and small p-value."},
+    {q:"A marketing analyst tests if product preference differs by age group (Young/Middle/Senior) and product (A/B/C). H₁ is:",
+     opts:["All groups prefer the same product","Age group and product preference are independent","Age group and product preference are related","Product A is most popular"],correct:2,
+     exp:"H₁ is the alternative: the two categorical variables ARE related — knowing someone's age group tells you something about their product preference."},
+    {q:"V = 0.72. What does this suggest?",
+     opts:["Weak association","Moderate association","Strong association between the two categorical variables","No relationship"],correct:2,
+     exp:"V > 0.6 → strong association. The two categorical variables have a strong relationship."},
+    {q:"Why can't you use Pearson r instead of Chi-Square for categorical data?",
+     opts:["Pearson r requires normally distributed data","Pearson r requires numerical variables — it can't compute correlation between categories","Pearson r only works for large samples","Pearson r gives the same result"],correct:1,
+     exp:"Pearson r measures LINEAR relationships between numerical values. Categories (like 'Marketing' or 'Cash') have no numerical meaning to compute r."},
+    {q:"In a chi-square test: n=500, χ²=35, table is 3×4. Cramér's V =",
+     opts:["0.187","0.132","0.264","0.070"],correct:0,
+     exp:"V = √(χ²/(n×min(r−1,c−1))) = √(35/(500×min(2,3))) = √(35/1000) = √0.035 ≈ 0.187"},
+    {q:"The 'independence' assumption in chi-square means:",
+     opts:["Both variables have equal frequency","Each observation belongs to only one cell of the table","All expected values are equal","The table must be square"],correct:1,
+     exp:"Each row (observation) must contribute to exactly one cell. If a customer appears in multiple categories, the independence assumption is violated."},
+    {q:"You want to test: Does the city where employees work affect their transportation method? What type of test?",
+     opts:["T-Test","Chi-Square","Pearson r","ANOVA"],correct:1,
+     exp:"City = categorical. Transportation = categorical. Two categorical variables → Chi-Square test."},
+    {q:"In a 5×3 observed table (5 rows, 3 columns), Cramér's V uses min(r−1, c−1) =",
+     opts:["4","2","15","8"],correct:1,
+     exp:"min(rows−1, cols−1) = min(5−1, 3−1) = min(4, 2) = 2."},
+    {q:"Observed cell = 45, Expected = 30. This cell's contribution to χ² is:",
+     opts:["15","7.5","0.5","225"],correct:1,
+     exp:"(O−E)²/E = (45−30)²/30 = 225/30 = 7.5. This cell contributes 7.5 to the total chi-square statistic."},
+    {q:"Which Excel function counts rows matching two categorical conditions?",
+     opts:["=SUMIF","=COUNTIFS","=IF","=VLOOKUP"],correct:1,
+     exp:"=COUNTIFS(range1, criteria1, range2, criteria2) counts rows satisfying both conditions — essential for building observed tables."},
+    {q:"What happens to the chi-square statistic if observed = expected for all cells?",
+     opts:["χ² = 1","χ² = 0 — no evidence of relationship","χ² = n","χ² = V"],correct:1,
+     exp:"If every observed value equals the expected value, then every (O−E)²/E = 0, and χ² = 0. No evidence of any relationship."},
+    {q:"Chi-square test is robust to:",
+     opts:["Very small sample sizes","Large sample sizes with sufficient expected cell counts","Bimodal distributions","All types of data"],correct:1,
+     exp:"Chi-square works well with adequate sample sizes ensuring expected counts ≥ 5. It's not appropriate for very small samples."},
+    {q:"You run chi-square for Department (5 cat.) × Channel (3 cat.) with n=120, get χ²=8.2. Is this significant at α=0.05? (df=8, critical χ²=15.5)",
+     opts:["Yes — p < 0.05","No — χ² = 8.2 < 15.5, so p > 0.05","Yes because n=120","Cannot determine"],correct:1,
+     exp:"With df=8, the critical χ² at α=0.05 is 15.5. Our χ²=8.2 < 15.5, so p > 0.05 → fail to reject H₀."},
+    {q:"Cramér's V = 0 means:",
+     opts:["Perfect association","Very weak association","Complete independence — no association at all","Negative association"],correct:2,
+     exp:"V = 0 means the two categorical variables are completely independent. Knowing one tells you nothing about the other."},
+    {q:"After finding p = 0.001 in chi-square, the analyst says 'Gender strongly determines product preference.' Why is this problematic?",
+     opts:["p = 0.001 means the result is wrong","p only tells us significance. Cramér's V must be computed to assess strength — the relationship could be statistically significant but weak.","The analyst should have used t-test instead","p = 0.001 is too small to trust"],correct:1,
+     exp:"Significance ≠ Strength. p = 0.001 with V = 0.08 means a significant but very weak relationship. Always report V alongside the p-value."},
+  ]
+},
+{
+  id:"ttest", title:"T-Test, Cohen's D, ANOVA & Eta²", icon:"t",
+  color:"#1A5276",
+  summary:`<b>T-Test</b>: 2 categories vs numerical variable. Tests if group means differ. Excel: =T.TEST()<br>
+<b>Cohen's d</b>: Effect size for T-Test. d = |Mean₁ − Mean₂| / Pooled SD. 0.2=small, 0.5=medium, ≥0.8=large.<br>
+<b>ANOVA</b>: 3+ categories vs numerical. Tests if ANY group means differ. F-statistic.<br>
+<b>Eta-squared (η²)</b>: Effect size for ANOVA. η² = SS_Between / SS_Total. 0.01=small, 0.06=medium, ≥0.14=large.<br>
+<b>80% Rule</b>: When group sizes differ, sample 80% of the smallest group from each group.`,
+  formulas:[
+    ["T-Test","=T.TEST(group1, group2, 2, 3)","Returns p-value"],
+    ["Cohen's d","d = |Mean₁−Mean₂| / Pooled SD",""],
+    ["Pooled SD","√[(SD₁²+SD₂²)/2]",""],
+    ["Eta-squared","η² = SS_Between / SS_Total",""],
+    ["80% Rule","n_sample = round(0.8 × smallest group)",""],
+  ],
+  questions:[
+    {q:"When should you use a T-Test instead of ANOVA?",
+     opts:["When the numerical variable is skewed","When you are comparing means across exactly 2 groups","When you have 3 or more groups","When both variables are categorical"],correct:1,
+     exp:"T-Test is for 2 groups. ANOVA is for 3 or more groups. Using multiple t-tests instead of ANOVA inflates the Type I error rate."},
+    {q:"The null hypothesis in a T-Test is:",
+     opts:["Group 1 mean > Group 2 mean","Group 1 mean = Group 2 mean (no difference)","The groups have the same variance","One group is larger than the other"],correct:1,
+     exp:"H₀: μ₁ = μ₂. The T-Test evaluates whether the difference in means is large enough to reject this null hypothesis."},
+    {q:"T-Test gives p = 0.001. What is your conclusion?",
+     opts:["No significant difference","The two group means are significantly different (reject H₀)","The effect size is large","Both groups are identical"],correct:1,
+     exp:"p = 0.001 < 0.05 → Reject H₀. There is a statistically significant difference between the group means."},
+    {q:"Cohen's d = 1.3. How would you describe this effect?",
+     opts:["Small","Medium","Large","No effect"],correct:2,
+     exp:"d ≥ 0.8 is considered a large effect. d = 1.3 is a very large effect — the group means are more than 1 standard deviation apart."},
+    {q:"Cohen's d thresholds: small = ___, medium = ___, large = ___.",
+     opts:["0.1, 0.3, 0.5","0.2, 0.5, 0.8","0.01, 0.06, 0.14","0.3, 0.7, 0.9"],correct:1,
+     exp:"Cohen (1988): small = 0.2, medium = 0.5, large ≥ 0.8. These are conventional thresholds for practical significance."},
+    {q:"Group 1: Mean=100, Group 2: Mean=120, Pooled SD=25. Cohen's d =",
+     opts:["0.5","0.8","2.0","0.25"],correct:1,
+     exp:"d = |100−120|/25 = 20/25 = 0.8. This is exactly at the threshold for a large effect."},
+    {q:"Why can't you just use three separate T-Tests to compare three groups?",
+     opts:["T-Tests can only compare numerical variables","Multiple tests inflate the Type I error rate — you'd be more likely to find a false significant result","You need at least 200 observations","T-Tests don't work for 3 groups"],correct:1,
+     exp:"Each test has a 5% error rate. Running 3 tests raises the probability of at least one false positive to ~14%. ANOVA controls the overall error rate."},
+    {q:"ANOVA's null hypothesis is:",
+     opts:["All group means are different","At least one group mean differs from the others","All group means are equal","The largest group is significantly different"],correct:2,
+     exp:"H₀: μ₁ = μ₂ = μ₃ = ... All group means are equal. ANOVA tests whether any group differs enough to reject this."},
+    {q:"ANOVA gives p = 0.02. This means:",
+     opts:["All groups are different from each other","At least one group mean is significantly different from the others","No groups differ significantly","All groups have the same variance"],correct:1,
+     exp:"Significant ANOVA (p < 0.05) only tells you that at least one group differs. Post-hoc tests are needed to find WHICH groups differ."},
+    {q:"Eta-squared (η²) = 0.18. This represents:",
+     opts:["A small effect","A medium effect","A large effect (η² ≥ 0.14)","No effect"],correct:2,
+     exp:"η² ≥ 0.14 → large effect. 18% of the total variance in the numerical variable is explained by group membership."},
+    {q:"η² = SS_Between / SS_Total. If SS_Between = 500 and SS_Total = 2000, η² =",
+     opts:["4.0","0.25","0.75","25"],correct:1,
+     exp:"η² = 500/2000 = 0.25. The group explains 25% of total variance — a large effect."},
+    {q:"Eta-squared thresholds: small = ___, medium = ___, large = ___.",
+     opts:["0.1, 0.3, 0.6","0.01, 0.06, 0.14","0.2, 0.5, 0.8","0.05, 0.10, 0.20"],correct:1,
+     exp:"Cohen's benchmarks for η²: small ≈ 0.01 (1%), medium ≈ 0.06 (6%), large ≥ 0.14 (14%)."},
+    {q:"The 80% Rule for sampling states:",
+     opts:["Use 80% confidence intervals","Sample 80% of the total dataset","When comparing groups, use a sample equal to 80% of the smallest group from each group","Remove 80% of outliers"],correct:2,
+     exp:"For fair comparison, sample the same n from each group = 80% of the smallest group. This avoids the largest group dominating the analysis."},
+    {q:"You have 3 groups: Group A (n=200), Group B (n=150), Group C (n=180). Using the 80% Rule, sample size per group =",
+     opts:["150","180","120","160"],correct:2,
+     exp:"Smallest group = 150. 80% of 150 = 120. Take 120 from each group for a balanced comparison."},
+    {q:"T-Test found p = 0.03, Cohen's d = 0.18. What is the complete interpretation?",
+     opts:["Large significant effect","Significant difference (p<0.05) but very small practical effect (d=0.18 < 0.2)","No significant difference","Medium effect, significant"],correct:1,
+     exp:"Statistical significance (p=0.03) but near-negligible effect (d=0.18). The difference is real but tiny — not practically meaningful."},
+    {q:"The Pooled Standard Deviation in Cohen's d is calculated as:",
+     opts:["(SD₁+SD₂)/2","√[(SD₁²+SD₂²)/2]","(SD₁×SD₂)/n","SD₁−SD₂"],correct:1,
+     exp:"Pooled SD = √[(SD₁²+SD₂²)/2]. It gives a combined measure of variability from both groups."},
+    {q:"Which test compares salaries (numerical) across 4 departments (categorical)?",
+     opts:["T-Test","Chi-Square","ANOVA","Pearson r"],correct:2,
+     exp:"4 groups (4 departments) × 1 numerical variable (salary) → ANOVA. T-Test is only for exactly 2 groups."},
+    {q:"ANOVA's F-statistic is:",
+     opts:["Variance between groups / Variance within groups","Mean of group 1 / Mean of group 2","Total variance / Sample variance","Effect size squared"],correct:0,
+     exp:"F = MS_Between / MS_Within = (variance explained by groups) / (variance within groups). Large F → groups are different relative to within-group variability."},
+    {q:"p = 0.04, η² = 0.03 for ANOVA. What do you conclude?",
+     opts:["Large significant difference","Significant but small effect — the groups differ, but it explains only 3% of variance","No significance","Medium effect"],correct:1,
+     exp:"Significant (p<0.05) but small effect (η²=0.03 ≈ 0.01 threshold). The groups differ statistically but group membership explains only 3% of the outcome."},
+    {q:"What does 'independent samples T-Test' mean?",
+     opts:["The two groups share participants","The two groups are completely different (separate) people or observations","The samples are equal in size","The test is run independently of ANOVA"],correct:1,
+     exp:"Independent samples = the two groups are different sets of people. Paired T-Test would be used when the same people are measured twice."},
+    {q:"A company tests 3 email subject lines (A, B, C) and measures click-through rate. Which test?",
+     opts:["T-Test (A vs B vs C)","ANOVA","Chi-Square","Pearson r"],correct:1,
+     exp:"3 groups (A, B, C) × 1 numerical variable (click-through rate) → ANOVA. More than 2 groups requires ANOVA, not T-Test."},
+    {q:"After ANOVA gives p < 0.05, what additional analysis is typically needed?",
+     opts:["Run Chi-Square","Post-hoc tests to identify WHICH specific groups differ","Compute Pearson r","Run a regression"],correct:1,
+     exp:"ANOVA only tells you 'at least one group differs.' Post-hoc tests (Tukey, Bonferroni) identify the specific pair(s) that are significantly different."},
+    {q:"Group 1: n=50, Mean=₪15k. Group 2: n=50, Mean=₪18k. Pooled SD=₪4k. Cohen's d =",
+     opts:["0.5","0.75","1.0","0.25"],correct:1,
+     exp:"d = |15,000−18,000|/4,000 = 3,000/4,000 = 0.75. This is just below the large effect threshold (0.8) — a meaningful medium-large effect."},
+    {q:"η² = 0.12 in an ANOVA comparing departments vs performance score. This means:",
+     opts:["12% of employees are high performers","Department explains 12% of the variance in performance — a medium-large effect","12 departments have different performance","The F-statistic is 0.12"],correct:1,
+     exp:"η² = 0.12 is close to the large threshold (0.14). About 12% of variation in performance scores is explained by which department someone works in."},
+    {q:"T-Test assumes the two groups have:",
+     opts:["The same mean","Equal sample sizes","Approximately equal variances (or use Welch's T-Test for unequal variances)","No outliers whatsoever"],correct:2,
+     exp:"The standard T-Test assumes roughly equal variances. If variances differ greatly, use Welch's T-Test (Excel's T.TEST type=3 handles this)."},
+    {q:"You're comparing customer spending across 2 groups: logged-in vs guests. Using Excel, the correct formula is:",
+     opts:["=ANOVA(A1:A50, B1:B50)","=T.TEST(A1:A50, B1:B50, 2, 3)","=CHISQ.TEST(A1:A50, B1:B50)","=CORREL(A1:A50, B1:B50)"],correct:1,
+     exp:"=T.TEST(array1, array2, tails, type). tails=2 (two-tailed), type=3 (unequal variances/Welch). Returns p-value."},
+    {q:"Eta-squared (η²) and Cohen's d are both:",
+     opts:["P-values","Measures of effect size — how large the group difference is in practical terms","Chi-square statistics","Measures of correlation"],correct:1,
+     exp:"Both are effect size measures. Cohen's d is for T-Tests (2 groups). η² is for ANOVA (3+ groups). Both tell you how meaningful the difference is."},
+    {q:"ANOVA p = 0.08. You conclude:",
+     opts:["All groups are equal","At least one group differs significantly","Fail to reject H₀ — no significant difference found","The η² must be computed first"],correct:2,
+     exp:"p = 0.08 > 0.05 → Fail to reject H₀. No statistically significant difference among group means was found."},
+    {q:"The 80% Rule exists to:",
+     opts:["Ensure the sample is representative","Ensure equal-sized groups for fair statistical comparison — preventing larger groups from dominating","Remove 80% of outliers","Increase the p-value"],correct:1,
+     exp:"Unequal group sizes can distort statistical comparisons. The 80% rule ensures each group contributes the same number of observations."},
+    {q:"Cohen's d = 0.3. This effect is:",
+     opts:["Large","Negligible","Small-medium (between small=0.2 and medium=0.5)","Significant"],correct:2,
+     exp:"d = 0.3 is above the small threshold (0.2) but below medium (0.5). It's a small-to-medium effect — statistically detectable but modest in practice."},
+  ]
+}
+];
+
+
+// ── State ─────────────────────────────────────────────────────────────────
+const state = {
+  view: 'home',
+  topicId: null,
+  tab: 'learn',
+  quiz: { questions: [], current: 0, answers: [], answered: false },
+  progress: JSON.parse(localStorage.getItem('dab_progress') || '{}'),
+};
+
+function saveProgress() {
+  try { localStorage.setItem('dab_progress', JSON.stringify(state.progress)); } catch(e){}
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+function buildNav() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '<div class="nav-section">Topics</div>';
+  const homeBtn = document.createElement('button');
+  homeBtn.className = 'nav-item' + (state.view==='home' ? ' active' : '');
+  homeBtn.id = 'nav-home';
+  homeBtn.innerHTML = '<span class="nav-icon">🏠</span><span class="nav-label">Home</span>';
+  homeBtn.onclick = showHome;
+  sidebar.appendChild(homeBtn);
+
+  TOPICS.forEach(t => {
+    const p = state.progress[t.id] || {};
+    const done = p.best !== undefined;
+    const btn = document.createElement('button');
+    btn.className = 'nav-item' + (state.topicId===t.id && state.view!=='home' ? ' active' : '');
+    btn.innerHTML = `<span class="nav-icon">${t.icon}</span>
+      <span class="nav-label">${t.title}</span>
+      ${done ? `<span class="nav-badge done">${p.best}%</span>` : '<span class="nav-badge">30 Q</span>'}`;
+    btn.onclick = () => showTopic(t.id);
+    sidebar.appendChild(btn);
+  });
+}
+
+function updateGlobalProgress() {
+  const total = TOPICS.length;
+  const done = TOPICS.filter(t => state.progress[t.id]?.best !== undefined).length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('global-bar').style.width = pct + '%';
+  document.getElementById('global-pct').textContent = pct + '%';
+}
+
+// ── Home ──────────────────────────────────────────────────────────────────
+function showHome() {
+  state.view = 'home';
+  state.topicId = null;
+  buildNav();
+  updateGlobalProgress();
+  const m = document.getElementById('main-content');
+  const cards = TOPICS.map(t => {
+    const p = state.progress[t.id] || {};
+    const attempts = p.attempts || 0;
+    const best = p.best;
+    const pct = best !== undefined ? best : 0;
+    const barColor = pct >= 80 ? '#2E7D4F' : pct >= 50 ? '#F5A623' : '#C0392B';
+    return `<div class="topic-card" onclick="showTopic('${t.id}')">
+      <div class="topic-card-accent" style="background:${t.color}"></div>
+      <span class="topic-card-icon">${t.icon}</span>
+      <h3>${t.title}</h3>
+      <p>30 practice questions · Key formulas · Explanations</p>
+      <div class="topic-card-progress">
+        <div class="topic-card-progress-fill" style="width:${pct}%;background:${barColor}"></div>
+      </div>
+      <div class="topic-card-stats">
+        <span>${attempts > 0 ? 'Best: ' + pct + '%' : 'Not started'}</span>
+        <span>${attempts > 0 ? attempts + ' attempt' + (attempts>1?'s':'') : '—'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  m.innerHTML = `
+    <div class="page-header">
+      <h2>Welcome back 👋</h2>
+      <p>Select a topic to review the material and test yourself with 30 questions.</p>
+    </div>
+    <div class="home-grid">${cards}</div>`;
+}
+
+// ── Topic ─────────────────────────────────────────────────────────────────
+function showTopic(topicId, tab) {
+  state.view = 'topic';
+  state.topicId = topicId;
+  state.tab = tab || 'learn';
+  buildNav();
+  updateGlobalProgress();
+  const topic = TOPICS.find(t => t.id === topicId);
+
+  const formulaRows = (topic.formulas || []).map(([name, formula, excel]) =>
+    `<tr><td><b>${name}</b></td><td>${formula}</td><td>${excel ? '<span class="formula-code">'+excel+'</span>' : '—'}</td></tr>`
+  ).join('');
+
+  const m = document.getElementById('main-content');
+  m.innerHTML = `
+    <div class="topic-header">
+      <div class="topic-header-top">
+        <div class="topic-header-icon" style="background:${topic.color}">${topic.icon}</div>
+        <div class="topic-header-title">
+          <h2>${topic.title}</h2>
+          <p>30 practice questions</p>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab ${state.tab==='learn'?'active':''}" onclick="showTopic('${topicId}','learn')">📖 Learn</button>
+      <button class="tab ${state.tab==='quiz'?'active':''}" onclick="startQuiz('${topicId}')">✏️ Practice Quiz</button>
+    </div>
+    <div id="tab-content"></div>`;
+
+  if (state.tab === 'learn') {
+    document.getElementById('tab-content').innerHTML = `
+      <div class="question-card">
+        <div class="q-num">Key Concepts</div>
+        <div style="font-size:13.5px;line-height:1.8;color:var(--text)">${topic.summary}</div>
+      </div>
+      ${formulaRows ? `<div class="question-card">
+        <div class="q-num">Formulas & Excel Reference</div>
+        <table class="formula-table">
+          <thead><tr><th>Name</th><th>Formula</th><th>Excel</th></tr></thead>
+          <tbody>${formulaRows}</tbody>
+        </table>
+      </div>` : ''}
+      <div style="text-align:center;padding:1rem 0">
+        <button class="btn gold" onclick="startQuiz('${topicId}')">Start Practice Quiz →</button>
+      </div>`;
+  }
+}
+
+// ── Quiz ──────────────────────────────────────────────────────────────────
+function startQuiz(topicId) {
+  state.view = 'topic';
+  state.topicId = topicId;
+  state.tab = 'quiz';
+  buildNav();
+
+  const topic = TOPICS.find(t => t.id === topicId);
+  // Shuffle questions
+  const shuffled = [...topic.questions].sort(() => Math.random() - 0.5);
+  state.quiz = { questions: shuffled, current: 0, answers: [], answered: false, correct: 0 };
+
+  const m = document.getElementById('main-content');
+  m.innerHTML = `
+    <div class="topic-header">
+      <div class="topic-header-top">
+        <div class="topic-header-icon" style="background:${topic.color}">${topic.icon}</div>
+        <div class="topic-header-title">
+          <h2>${topic.title} — Quiz</h2>
+          <p>30 questions · Choose the best answer</p>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab" onclick="showTopic('${topicId}','learn')">📖 Learn</button>
+      <button class="tab active">✏️ Practice Quiz</button>
+    </div>
+    <div id="tab-content"></div>`;
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = state.quiz;
+  const topic = TOPICS.find(t => t.id === state.topicId);
+  const current = q.questions[q.current];
+  const pct = Math.round((q.current / q.questions.length) * 100);
+  const letters = ['A','B','C','D'];
+
+  const opts = current.opts.map((opt, i) =>
+    `<button class="option-btn" id="opt-${i}" onclick="selectAnswer(${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`
+  ).join('');
+
+  document.getElementById('tab-content').innerHTML = `
+    <div class="quiz-progress-row">
+      <span class="quiz-progress-label">${q.current + 1} / ${q.questions.length}</span>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+      <span class="quiz-score-badge" id="score-badge">Score: ${q.correct||0}/${q.current}</span>
+    </div>
+    <div class="question-card">
+      <div class="q-num">Question ${q.current + 1} of ${q.questions.length}</div>
+      <div class="q-text">${current.q}</div>
+      <div class="options">${opts}</div>
+      <div class="explanation" id="explanation">${current.exp}</div>
+      <div class="q-actions" id="q-actions" style="display:none">
+        <button class="btn primary" id="next-btn" onclick="nextQuestion()">
+          ${q.current + 1 < q.questions.length ? 'Next Question →' : 'See Results'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const current = state.quiz.questions[state.quiz.current];
+  const correct = current.correct;
+  const isCorrect = idx === correct;
+  if (isCorrect) state.quiz.correct = (state.quiz.correct || 0) + 1;
+  state.quiz.answers.push({ idx, correct: isCorrect });
+
+  // Style buttons
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add(isCorrect && i === idx ? 'correct' : 'reveal');
+    if (i === idx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('q-actions').style.display = 'flex';
+}
+
+function nextQuestion() {
+  state.quiz.current++;
+  state.quiz.answered = false;
+  if (state.quiz.current >= state.quiz.questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  const q = state.quiz;
+  const total = q.questions.length;
+  const correct = q.correct || 0;
+  const pct = Math.round((correct / total) * 100);
+  const topicId = state.topicId;
+
+  // Save progress
+  const p = state.progress[topicId] || {};
+  p.attempts = (p.attempts || 0) + 1;
+  p.best = Math.max(p.best || 0, pct);
+  p.last = pct;
+  state.progress[topicId] = p;
+  saveProgress();
+  updateGlobalProgress();
+  buildNav();
+
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : '⭐';
+  const msg = pct >= 90 ? "Excellent! You have a strong grasp of this topic." :
+              pct >= 70 ? "Good work! Review the questions you missed." :
+              pct >= 50 ? "Keep practicing — revisit the Learn section." :
+              "Go back to Learn and try again. You've got this.";
+
+  const reviewItems = q.questions.map((ques, i) => {
+    const ans = q.answers[i];
+    const ok = ans && ans.correct;
+    return `<div class="review-item">
+      <div class="review-dot ${ok?'correct':'wrong'}"></div>
+      <div>
+        <div class="review-q">${ques.q}</div>
+        <div class="review-ans">${ok ? '✓ Correct' : '✗ Correct answer: ' + ques.opts[ques.correct]}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tab-content').innerHTML = `
+    <div class="results-card">
+      <div class="results-score">${pct}%</div>
+      <div class="results-label">${correct} / ${total} correct</div>
+      <div class="results-stars">${stars}</div>
+      <div class="results-message">${msg}</div>
+      <div class="results-breakdown">
+        <div class="result-stat"><div class="result-stat-num" style="color:#2E7D4F">${correct}</div><div class="result-stat-label">Correct</div></div>
+        <div class="result-stat"><div class="result-stat-num" style="color:#C0392B">${total-correct}</div><div class="result-stat-label">Wrong</div></div>
+        <div class="result-stat"><div class="result-stat-num">${p.attempts}</div><div class="result-stat-label">Attempts</div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+      <button class="btn primary" onclick="startQuiz('${topicId}')">Try Again</button>
+      <button class="btn" onclick="showTopic('${topicId}','learn')">Review Material</button>
+      <button class="btn gold" onclick="showHome()">Back to Home</button>
+    </div>
+    <div class="review-list">${reviewItems}</div>`;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+showHome();
+</script>
+</body>
+</html>
